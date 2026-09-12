@@ -27,5 +27,7 @@ jobs:
           node --check material-delta.js
           node --check library-core.js
           node --check material-library.js
-      - name: State, trace, delta, and library tests
+          node --check influence-core.js
+          node --check influence-lab.js
+      - name: State, trace, delta, library, and influence tests
         run: npm test

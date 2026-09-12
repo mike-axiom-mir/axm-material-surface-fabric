@@ -6,9 +6,32 @@ Its role is deliberately narrower than “make every visual here”:
 
 > **Increase the quality, reuse, inspectability, and quantity of material / texture ingredients so other AXM visual systems become stronger.**
 
-Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, and export portable donor packs.
+Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, and export portable donor packs.
 
 Open `index.html` directly in a modern browser. No install, account, server, AI call, or network connection is required.
+
+## v0.5.0 — Material Influence Lab
+
+v0.5 adds the next layer above the reusable library:
+
+`ingredients → recipe stack → channel routing / masks / transforms / tiling → light rig → shader-like preview controls → view rig → observed preview → A/B state + pixel delta`
+
+The Material Influence Lab can:
+
+- refresh reusable entries from the explicitly saved v0.4 material library, with a weaker current-UI fallback when no saved library is present;
+- create, rename and duplicate persistent material recipes;
+- stack material-library ingredients bottom-to-top;
+- explicitly assign channel routing, blend mode, opacity, masks, scale, rotation, offset and preview tiling per layer;
+- preserve normal, roughness, metallic, AO, height/displacement, opacity and color-mask routing even when the bounded 2D preview does not physically interpret those channels;
+- preview eight distinct light rigs with editable angle, intensity, ambient, environment, shadow and color controls;
+- switch between flat, tiling, close-up and explicitly labeled grazing-angle proxy views;
+- vary bounded shader-like preview influences for exposure, saturation, clearcoat-like highlight, fresnel-like edge response, emissive boost and a roughness-response proxy;
+- capture A/B material influence states and reuse the existing delta engine to measure exact changed preview pixels and regions;
+- explicitly save/load and export/import the complete `axm-material-influence-workspace/v0.5.0` state.
+
+The light/view/shader system is intentionally a local Canvas 2D **influence preview**, not a claim of full PBR, BRDF, HDRI, GPU-shader, engine-parity or physical-light correctness.
+
+See [`docs/MATERIAL_INFLUENCE_LAB_V0_5.md`](docs/MATERIAL_INFLUENCE_LAB_V0_5.md).
 
 ## v0.4.0 — Reusable Material Library
 
@@ -80,7 +103,9 @@ The working page provides:
 - a live compacted view of the actual runtime state;
 - state snapshots with deterministic hashes and changed-path diffs;
 - a bounded action event log;
-- deterministic local demo visuals for exercising the state experiment without external assets.
+- deterministic local demo visuals for exercising the state experiment without external assets;
+- persistent reusable material-library entries and families;
+- persistent material influence recipes with explicit stacking, routing, light/view and shader-like preview state.
 
 ## Capability first
 
@@ -92,23 +117,23 @@ See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
 Internal AXM work is judged against the roots:
 
-- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, inference, and unknowns.
+- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, preview approximations, inference, and unknowns.
 - **Agency / non-domination** — local user control; no hidden upload, account, cloud, or remote dependency.
-- **Continuity** — exported state, experiments, lineage, persistent library entries, families, and donor packs preserve what actually happened.
-- **Wisdom before speed** — learn reusable material relationships from controlled use before prematurely imposing a universal schema.
+- **Continuity** — exported state, experiments, lineage, persistent library entries, recipes, families, influence state and donor packs preserve what actually happened.
+- **Wisdom before speed** — learn reusable material relationships from controlled use before prematurely imposing a universal schema or pretending a bounded preview is a complete renderer.
 
 ## Tests
 
-The browser page itself has no build dependency. Pure state/trace/delta/library helpers can be checked with Node:
+The browser page itself has no build dependency. Pure state/trace/delta/library/influence helpers can be checked with Node:
 
 ```bash
 npm test
 ```
 
-CI also syntax-checks the browser JavaScript. Tests cover stable state primitives, snapshot diffs, import validation, byte hashing, pixel summaries, trace comparison, spatial pixel deltas, region summaries, difference buffers, transition truth boundaries, stable library IDs, family membership, legacy donor import, and donor-pack round trips.
+CI also syntax-checks the browser JavaScript. Tests cover stable state primitives, snapshot diffs, import validation, byte hashing, pixel summaries, trace comparison, spatial pixel deltas, region summaries, difference buffers, transition truth boundaries, stable library IDs, family membership, legacy donor import, donor-pack round trips, material recipe normalization, bounded layer transforms, light/view/shader state, recipe duplication, fingerprints and state comparisons.
 
 ## Truth boundary
 
-The page can directly observe its own build metadata, canvas pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences between same-size captures, and the exact reusable image payloads it stores locally.
+The page can directly observe its own build metadata, canvas pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences between same-size captures, the exact reusable image payloads it stores locally, and the complete influence state used by its v0.5 preview path.
 
-It does not claim automatic PBR correctness, physical-material recognition, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, or causal states that were never recorded/exposed. A donor pack proves portable material data and declared routing metadata exist; downstream usefulness is established only when a separate consumer validates and adapts it.
+It does not claim automatic PBR correctness, physical-material recognition, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, full GPU shader execution, BRDF/HDRI correctness, cross-engine render parity, or causal states that were never recorded/exposed. A donor pack proves portable material data and declared routing metadata exist; downstream usefulness is established only when a separate consumer validates and adapts it. The v0.5 influence preview proves how this page combines and changes its own observable output, not universal physical-material behavior.
