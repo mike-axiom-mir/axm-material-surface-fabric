@@ -1,9 +1,9 @@
 {
   "name": "axm-material-surface-fabric",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
-  "description": "Local-first material/texture composition, observable state tracing, spatial delta experiments, persistent reusable library, and donor-pack reuse for AXM.",
+  "description": "Local-first material/texture composition, reusable library, state tracing, donor-pack reuse, and bounded Material Influence Lab recipes for AXM.",
   "scripts": {
-    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js"
+    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js"
   }
 }
