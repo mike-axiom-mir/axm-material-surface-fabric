@@ -1,9 +1,10 @@
 {
   "name": "axm-material-surface-fabric",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
-  "description": "Local-first material/texture composition, reusable library, influence recipes, WebGL rendering, broad deterministic vocabulary, bounded evaluation/evolution, and cross-machine material exchange for AXM.",
+  "description": "Local-first material/texture composition, reusable library, influence recipes, WebGL rendering, broad deterministic vocabulary, bounded evaluation/evolution, cross-machine material exchange, and headless exchange conformance for AXM.",
   "scripts": {
-    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js && node tests/exchange-core.test.js"
+    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js && node tests/exchange-core.test.js && node tests/conformance-core.test.js",
+    "material:conform": "node tools/material-conformance.js"
   }
 }
