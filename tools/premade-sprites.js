@@ -74,18 +74,6 @@ function extractAtlas(asset, options) {
   const decoded = png.decodePngRgba(sourceBytes);
   const candidates = core.extractCandidates(decoded.rgba, decoded.width, decoded.height, asset.id, options.config);
   const extraction = core.configFor(decoded.width, decoded.height, options.config);
-  const index = core.makeIndex({
-    pack: { format: pack.format, version: pack.version, archiveSha256: pack.binaryPack.sha256 },
-    atlas: asset,
-    width: decoded.width,
-    height: decoded.height,
-    sourceBasis: 'v0.11-source-png',
-    sourceSha256: sha256(sourceBytes),
-    extraction,
-    candidates
-  });
-  const validation = core.validateIndex(index);
-  if (!validation.ok) throw new Error(validation.reason);
 
   const atlasRoot = path.join(options.outDir, asset.id);
   if (options.writeSprites) {
@@ -98,8 +86,22 @@ function extractAtlas(asset, options) {
       fs.writeFileSync(target, bytes);
       candidate.spriteFile = path.relative(options.outDir, target).replace(/\\/g, '/');
       candidate.spriteSha256 = sha256(bytes);
+      candidate.spriteDimensions = { width: crop.width, height: crop.height };
     }
   }
+
+  const index = core.makeIndex({
+    pack: { format: pack.format, version: pack.version, archiveSha256: pack.binaryPack.sha256 },
+    atlas: asset,
+    width: decoded.width,
+    height: decoded.height,
+    sourceBasis: 'v0.11-source-png',
+    sourceSha256: sha256(sourceBytes),
+    extraction,
+    candidates
+  });
+  const validation = core.validateIndex(index);
+  if (!validation.ok) throw new Error(validation.reason);
   return index;
 }
 
@@ -117,7 +119,7 @@ function combinedIndex(indices) {
     },
     truthBoundary: {
       semantics: 'Entries are alpha-derived sprite candidates, not automatic semantic object labels.',
-      continuity: 'Each per-atlas index records extraction parameters, normalized bounds and source-PNG SHA-256.',
+      continuity: 'Each per-atlas index records extraction parameters, normalized bounds, source-PNG SHA-256 and emitted sprite hashes when crops are written.',
       authority: 'Extraction does not install or promote any candidate automatically.'
     }
   };
@@ -153,7 +155,7 @@ function main() {
       process.exit(validation.ok ? 0 : 2);
     }
     if (parsed.format === 'axm-premade-sprite-index-set' && Array.isArray(parsed.indices)) {
-      const invalid = parsed.indices.map((index) => core.validateIndex(index)).find((result) => !result.ok);
+      const invalid = parsed.indices.map((item) => core.validateIndex(item)).find((result) => !result.ok);
       const result = invalid || { ok:true };
       process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
       process.exit(result.ok ? 0 : 2);
