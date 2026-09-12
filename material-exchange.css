@@ -1,0 +1,126 @@
+.material-exchange-panel { grid-column: 1 / -1; }
+.exchange-heading { align-items: center; }
+.exchange-toolbar,
+.exchange-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 15px 0;
+}
+.exchange-actions { padding-bottom: 13px; }
+.exchange-actions > span { color: #8ea0aa; font-size: 12px; margin-left: auto; }
+.exchange-layout {
+  display: grid;
+  grid-template-columns: minmax(270px, .72fr) minmax(420px, 1.28fr);
+  gap: 10px;
+  padding: 14px 15px 0;
+}
+.exchange-offer,
+.exchange-entries,
+.exchange-feedback { min-width: 0; }
+.exchange-offer > label {
+  display: grid;
+  gap: 5px;
+  padding: 10px 12px 0;
+  color: #8ea0aa;
+  font-size: 11px;
+}
+.exchange-offer select {
+  width: 100%;
+  border: 1px solid rgba(180,198,209,.2);
+  border-radius: 8px;
+  padding: 8px 9px;
+  color: #edf3f6;
+  background: rgba(0,0,0,.24);
+}
+.exchange-producer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 7px;
+  padding: 10px 12px 0;
+}
+.exchange-producer > div,
+.exchange-feedback-summary > div {
+  border: 1px solid rgba(180,198,209,.12);
+  border-radius: 8px;
+  padding: 8px 9px;
+  background: rgba(255,255,255,.018);
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.exchange-producer span,
+.exchange-feedback-summary span { color: #7f929c; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+.exchange-producer strong,
+.exchange-feedback-summary strong { overflow-wrap: anywhere; color: #d9e6eb; font-size: 12px; }
+.exchange-family-state {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 10px 12px 12px;
+  color: #95a8b1;
+  font-size: 11px;
+}
+.exchange-state {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(85,217,255,.24);
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: #a9eefe;
+  background: rgba(85,217,255,.045);
+  white-space: nowrap;
+}
+.exchange-state.hold,
+.exchange-state.partial-hold { border-color: rgba(255,157,46,.36); color: #ffd08c; background: rgba(255,157,46,.06); }
+.exchange-state.portable-verified,
+.exchange-state.portable { border-color: rgba(122,224,170,.34); color: #aeecc8; background: rgba(122,224,170,.05); }
+.exchange-state.portable-unverified,
+.exchange-state.portable-awaiting-verification { border-color: rgba(247,215,100,.3); color: #f4df96; }
+.exchange-entry-list {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px 12px;
+  max-height: 450px;
+  overflow: auto;
+}
+.exchange-entry {
+  display: grid;
+  grid-template-columns: minmax(160px,1.5fr) minmax(90px,.7fr) 72px minmax(120px,.9fr) minmax(160px,1fr) minmax(160px,1fr);
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid rgba(180,198,209,.12);
+  border-radius: 9px;
+  background: rgba(255,255,255,.018);
+  font-size: 11px;
+}
+.exchange-entry.held { border-color: rgba(255,157,46,.22); }
+.exchange-entry > div { min-width: 0; display: grid; gap: 2px; }
+.exchange-entry strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.exchange-entry small { color: #7f929c; overflow-wrap: anywhere; }
+.exchange-feedback { margin: 0 15px 15px; }
+.exchange-feedback-summary {
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  gap: 7px;
+  padding: 10px 12px 0;
+}
+.exchange-output { margin: 12px; max-height: 360px; }
+@media (max-width: 1050px) {
+  .exchange-layout { grid-template-columns: 1fr; }
+  .exchange-entry { grid-template-columns: minmax(150px,1.3fr) minmax(90px,.8fr) 72px minmax(120px,1fr); }
+  .exchange-entry > small { grid-column: span 2; }
+  .exchange-feedback-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 650px) {
+  .exchange-toolbar .button,
+  .exchange-actions .button { flex: 1 1 auto; }
+  .exchange-actions > span { width: 100%; margin-left: 0; }
+  .exchange-producer { grid-template-columns: 1fr; }
+  .exchange-entry { grid-template-columns: 1fr 1fr; }
+  .exchange-entry > div,
+  .exchange-entry > small { grid-column: 1 / -1; }
+  .exchange-feedback-summary { grid-template-columns: 1fr; }
+}
