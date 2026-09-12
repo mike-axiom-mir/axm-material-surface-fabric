@@ -108,7 +108,9 @@ function warningsForStats(channel, stats) {
     if (stats.normal && stats.normal.meanZ < 0.15) warnings.push('normal-positive-z-weak');
     if (stats.normal && stats.normal.validLengthShare < 0.75) warnings.push('normal-vector-length-irregular');
   }
-  if ((channel === 'base-color' || channel === 'normal') && stats.coarseColorBins <= 4 && stats.samples > 16) warnings.push('low-signal-diversity');
+  // Low palette diversity is suspicious for base colour, but it is common and valid for
+  // gently varying tangent-space normals. Normal maps have their own vector diagnostics above.
+  if (channel === 'base-color' && stats.coarseColorBins <= 4 && stats.samples > 16) warnings.push('low-signal-diversity');
   if (stats.visibleAlphaShare === 0) warnings.push('fully-transparent-signal');
   return uniqueSorted(warnings);
 }
