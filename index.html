@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="premade-sprite-lab.css" />
   <link rel="stylesheet" href="premade-pattern-memory.css" />
   <link rel="stylesheet" href="premade-guide.css" />
+  <link rel="stylesheet" href="premade-closed-loop.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -28,149 +29,42 @@
         <h1>Material / Surface Fabric</h1>
         <p class="subtitle">Increase reusable materials and textures so the rest of the visual stack gets stronger.</p>
       </div>
-      <div class="truth-strip" aria-label="root constraints">
-        <span>TRUTH</span><span>AGENCY</span><span>CONTINUITY</span><span>WISDOM &gt; SPEED</span>
-      </div>
+      <div class="truth-strip" aria-label="root constraints"><span>TRUTH</span><span>AGENCY</span><span>CONTINUITY</span><span>WISDOM &gt; SPEED</span></div>
     </header>
 
     <nav class="toolbar" aria-label="workspace actions">
-      <label class="button primary" for="assetInput">Import images</label>
-      <input id="assetInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden />
-      <button class="button" id="seedDemoButton">Seed demo</button>
-      <button class="button accent" id="captureButton">Capture state</button>
-      <button class="button" id="exportPngButton">Export PNG</button>
-      <button class="button" id="exportStateButton">Export state</button>
-      <label class="button" for="stateInput">Import state</label>
-      <input id="stateInput" type="file" accept="application/json,.json" hidden />
-      <button class="button" id="saveLocalButton">Save local</button>
-      <button class="button" id="loadLocalButton">Load local</button>
-      <button class="button danger subtle" id="resetButton">Reset</button>
+      <label class="button primary" for="assetInput">Import images</label><input id="assetInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden />
+      <button class="button" id="seedDemoButton">Seed demo</button><button class="button accent" id="captureButton">Capture state</button><button class="button" id="exportPngButton">Export PNG</button><button class="button" id="exportStateButton">Export state</button>
+      <label class="button" for="stateInput">Import state</label><input id="stateInput" type="file" accept="application/json,.json" hidden />
+      <button class="button" id="saveLocalButton">Save local</button><button class="button" id="loadLocalButton">Load local</button><button class="button danger subtle" id="resetButton">Reset</button>
     </nav>
 
     <main class="workspace-grid">
       <section class="panel library-panel">
-        <div class="panel-heading">
-          <div>
-            <div class="panel-kicker">01</div>
-            <h2>Visual shelf</h2>
-          </div>
-          <span class="count-pill" id="assetCount">0</span>
-        </div>
-
-        <label class="drop-zone" id="dropZone" for="assetInput">
-          <strong>Drop PNG / JPG / WEBP</strong>
-          <span>Transparent overlays stay transparent.</span>
-        </label>
-
-        <div class="search-row">
-          <input id="librarySearch" type="search" placeholder="Filter shelf…" autocomplete="off" />
-        </div>
-
-        <div class="asset-grid" id="assetGrid"></div>
+        <div class="panel-heading"><div><div class="panel-kicker">01</div><h2>Visual shelf</h2></div><span class="count-pill" id="assetCount">0</span></div>
+        <label class="drop-zone" id="dropZone" for="assetInput"><strong>Drop PNG / JPG / WEBP</strong><span>Transparent overlays stay transparent.</span></label>
+        <div class="search-row"><input id="librarySearch" type="search" placeholder="Filter shelf…" autocomplete="off" /></div><div class="asset-grid" id="assetGrid"></div>
       </section>
-
       <section class="panel stage-panel">
-        <div class="panel-heading stage-heading">
-          <div>
-            <div class="panel-kicker">02</div>
-            <h2>Composer</h2>
-          </div>
-          <div class="stage-meta">
-            <span id="workspaceSizeLabel">1024 × 1024</span>
-            <span id="stateHashLabel">state --------</span>
-          </div>
-        </div>
-
-        <div class="canvas-wrap checker" id="canvasWrap">
-          <canvas id="surfaceCanvas" width="1024" height="1024" aria-label="surface composer"></canvas>
-          <div class="empty-stage" id="emptyStage">
-            <strong>No layers yet</strong>
-            <span>Import an image, click “Use”, or seed the deterministic demo.</span>
-          </div>
-        </div>
-
-        <div class="workspace-controls">
-          <label>Name <input id="workspaceName" value="untitled-surface" /></label>
-          <label>Width <input id="workspaceWidth" type="number" min="64" max="4096" step="64" value="1024" /></label>
-          <label>Height <input id="workspaceHeight" type="number" min="64" max="4096" step="64" value="1024" /></label>
-          <label class="check-control"><input id="exportBackground" type="checkbox" /> Bake preview background into PNG</label>
-          <label>Preview <input id="previewBackground" type="color" value="#11161b" /></label>
-        </div>
+        <div class="panel-heading stage-heading"><div><div class="panel-kicker">02</div><h2>Composer</h2></div><div class="stage-meta"><span id="workspaceSizeLabel">1024 × 1024</span><span id="stateHashLabel">state --------</span></div></div>
+        <div class="canvas-wrap checker" id="canvasWrap"><canvas id="surfaceCanvas" width="1024" height="1024" aria-label="surface composer"></canvas><div class="empty-stage" id="emptyStage"><strong>No layers yet</strong><span>Import an image, click “Use”, or seed the deterministic demo.</span></div></div>
+        <div class="workspace-controls"><label>Name <input id="workspaceName" value="untitled-surface" /></label><label>Width <input id="workspaceWidth" type="number" min="64" max="4096" step="64" value="1024" /></label><label>Height <input id="workspaceHeight" type="number" min="64" max="4096" step="64" value="1024" /></label><label class="check-control"><input id="exportBackground" type="checkbox" /> Bake preview background into PNG</label><label>Preview <input id="previewBackground" type="color" value="#11161b" /></label></div>
       </section>
-
-      <section class="panel inspector-panel">
-        <div class="panel-heading">
-          <div>
-            <div class="panel-kicker">03</div>
-            <h2>Layers</h2>
-          </div>
-          <span class="count-pill" id="layerCount">0</span>
-        </div>
-
-        <div class="layer-list" id="layerList"></div>
-
-        <div class="inspector-card" id="layerInspector">
-          <div class="inspector-empty">Select a layer to inspect the exact parameters driving its render.</div>
-        </div>
-      </section>
-
-      <section class="panel state-panel">
-        <div class="panel-heading state-heading">
-          <div>
-            <div class="panel-kicker">04</div>
-            <h2>State observatory</h2>
-          </div>
-          <div class="state-actions">
-            <button class="mini-button active" data-state-tab="live">Live state</button>
-            <button class="mini-button" data-state-tab="diff">Last diff</button>
-            <button class="mini-button" data-state-tab="snapshots">Snapshots</button>
-            <button class="mini-button" id="copyStateButton">Copy</button>
-          </div>
-        </div>
-
-        <div class="truth-note">
-          This panel shows the page state it actually uses. Image payloads are compacted in the viewer so the JSON stays readable; exported state keeps the full payloads.
-        </div>
-        <pre id="stateOutput" class="state-output" tabindex="0"></pre>
-      </section>
+      <section class="panel inspector-panel"><div class="panel-heading"><div><div class="panel-kicker">03</div><h2>Layers</h2></div><span class="count-pill" id="layerCount">0</span></div><div class="layer-list" id="layerList"></div><div class="inspector-card" id="layerInspector"><div class="inspector-empty">Select a layer to inspect the exact parameters driving its render.</div></div></section>
+      <section class="panel state-panel"><div class="panel-heading state-heading"><div><div class="panel-kicker">04</div><h2>State observatory</h2></div><div class="state-actions"><button class="mini-button active" data-state-tab="live">Live state</button><button class="mini-button" data-state-tab="diff">Last diff</button><button class="mini-button" data-state-tab="snapshots">Snapshots</button><button class="mini-button" id="copyStateButton">Copy</button></div></div><div class="truth-note">This panel shows the page state it actually uses. Image payloads are compacted in the viewer so the JSON stays readable; exported state keeps the full payloads.</div><pre id="stateOutput" class="state-output" tabindex="0"></pre></section>
     </main>
-
-    <footer>
-      Offline by default • no account • no network call • no analytics • browser-local save is explicit only
-    </footer>
+    <footer>Offline by default • no account • no network call • no analytics • browser-local save is explicit only</footer>
   </div>
-
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="state-core.js"></script>
-  <script src="app.js"></script>
-  <script src="trace-core.js"></script>
-  <script src="trace-down.js"></script>
-  <script src="delta-core.js"></script>
-  <script src="material-delta.js"></script>
-  <script src="library-core.js"></script>
-  <script src="material-library.js"></script>
-  <script src="influence-core.js"></script>
-  <script src="influence-lab.js"></script>
-  <script src="renderer-core.js"></script>
-  <script src="renderer-bridge.js"></script>
-  <script src="material-vocabulary-core.js"></script>
-  <script src="material-vocabulary.js"></script>
-  <script src="material-evaluation-core.js"></script>
-  <script src="material-evaluation.js"></script>
-  <script src="exchange-core.js"></script>
-  <script src="material-exchange.js"></script>
-  <script src="premade-pack.js"></script>
-  <script src="alpha-sprite-core.js"></script>
-  <script src="premade-composer-core.js"></script>
-  <script src="premade-composer.js"></script>
-  <script src="premade-composer-load-bridge.js"></script>
-  <script src="premade-evolution-core.js"></script>
-  <script src="premade-evolution.js"></script>
-  <script src="premade-sprite-lab.js"></script>
-  <script src="premade-pattern-core.js"></script>
-  <script src="premade-pattern-memory.js"></script>
-  <script src="premade-guide-core.js"></script>
-  <script src="premade-guide.js"></script>
+  <script src="state-core.js"></script><script src="app.js"></script>
+  <script src="trace-core.js"></script><script src="trace-down.js"></script><script src="delta-core.js"></script><script src="material-delta.js"></script>
+  <script src="library-core.js"></script><script src="material-library.js"></script><script src="influence-core.js"></script><script src="influence-lab.js"></script>
+  <script src="renderer-core.js"></script><script src="renderer-bridge.js"></script><script src="material-vocabulary-core.js"></script><script src="material-vocabulary.js"></script>
+  <script src="material-evaluation-core.js"></script><script src="material-evaluation.js"></script><script src="exchange-core.js"></script><script src="material-exchange.js"></script>
+  <script src="premade-pack.js"></script><script src="alpha-sprite-core.js"></script><script src="premade-composer-core.js"></script><script src="premade-composer.js"></script><script src="premade-composer-load-bridge.js"></script>
+  <script src="premade-evolution-core.js"></script><script src="premade-evolution.js"></script><script src="premade-sprite-lab.js"></script>
+  <script src="premade-pattern-core.js"></script><script src="premade-pattern-memory.js"></script><script src="premade-guide-core.js"></script><script src="premade-guide.js"></script><script src="premade-guide-export-bridge.js"></script>
+  <script src="premade-loop-core.js"></script><script src="premade-closed-loop.js"></script>
 </body>
 </html>
