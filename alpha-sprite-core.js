@@ -46,18 +46,25 @@
     }
     return (`00000000${(hash >>> 0).toString(16)}`).slice(-8);
   }
+  function numericOr(value, fallback) {
+    return value == null || value === '' || !Number.isFinite(Number(value)) ? fallback : Number(value);
+  }
   function configFor(width, height, raw) {
     const source = raw || {};
     const area = Math.max(1, Number(width) * Number(height));
     const scale = Math.max(1, Math.min(width, height));
+    const defaultMinComponent = Math.max(8, area * 0.00004);
+    const defaultMinSprite = Math.max(24, area * 0.00015);
+    const defaultGap = Math.max(2, scale * 0.006);
+    const defaultPadding = Math.max(1, scale * 0.003);
     return {
-      alphaThreshold: Math.round(clamp(source.alphaThreshold == null ? 128 : source.alphaThreshold, 1, 254)),
-      minComponentPixels: Math.max(1, Math.round(Number(source.minComponentPixels) || Math.max(8, area * 0.00004))),
-      minSpritePixels: Math.max(1, Math.round(Number(source.minSpritePixels) || Math.max(24, area * 0.00015))),
-      mergeGap: Math.max(0, Math.round(Number(source.mergeGap) || Math.max(2, scale * 0.006))),
-      padding: Math.max(0, Math.round(Number(source.padding) || Math.max(1, scale * 0.003))),
+      alphaThreshold: Math.round(clamp(numericOr(source.alphaThreshold, 128), 1, 254)),
+      minComponentPixels: Math.max(1, Math.round(numericOr(source.minComponentPixels, defaultMinComponent))),
+      minSpritePixels: Math.max(1, Math.round(numericOr(source.minSpritePixels, defaultMinSprite))),
+      mergeGap: Math.max(0, Math.round(numericOr(source.mergeGap, defaultGap))),
+      padding: Math.max(0, Math.round(numericOr(source.padding, defaultPadding))),
       connectivity: source.connectivity === 4 ? 4 : 8,
-      maxSprites: Math.max(1, Math.min(4096, Math.round(Number(source.maxSprites) || 512)))
+      maxSprites: Math.max(1, Math.min(4096, Math.round(numericOr(source.maxSprites, 512))))
     };
   }
 
@@ -207,7 +214,7 @@
     const dims = assertRgba(rgba, width, height);
     const raw = rawComponents(rgba, dims.width, dims.height, rawConfig);
     const cfg = raw.config;
-    let groups = groupComponents(raw.components, cfg.mergeGap)
+    const groups = groupComponents(raw.components, cfg.mergeGap)
       .filter((group) => group.pixelCount >= cfg.minSpritePixels)
       .sort((a, b) => (a.minY - b.minY) || (a.minX - b.minX) || (b.pixelCount - a.pixelCount))
       .slice(0, cfg.maxSprites);
