@@ -102,6 +102,7 @@
   }
   function normalizeLayer(raw, index, pack) {
     const source = raw || {};
+    const transform = source.transform || {};
     const assetId = String(source.assetId || '');
     const asset = byId(pack, assetId);
     if (!asset) throw new TypeError(`Unknown premade asset: ${assetId}`);
@@ -132,13 +133,13 @@
       opacity: clamp(source.opacity == null ? 1 : source.opacity, 0, 1),
       blendMode: normalizeBlend(source.blendMode),
       transform: {
-        x: clamp(source.transform && source.transform.x == null ? 0.5 : source.transform.x, -2, 3),
-        y: clamp(source.transform && source.transform.y == null ? 0.5 : source.transform.y, -2, 3),
-        width: clamp(source.transform && source.transform.width == null ? 0.75 : source.transform.width, 0.02, 4),
-        height: clamp(source.transform && source.transform.height == null ? 0.75 : source.transform.height, 0.02, 4),
-        rotation: clamp(source.transform && source.transform.rotation || 0, -3600, 3600),
-        mirrorX: Boolean(source.transform && source.transform.mirrorX),
-        mirrorY: Boolean(source.transform && source.transform.mirrorY)
+        x: clamp(transform.x == null ? 0.5 : transform.x, -2, 3),
+        y: clamp(transform.y == null ? 0.5 : transform.y, -2, 3),
+        width: clamp(transform.width == null ? 0.75 : transform.width, 0.02, 4),
+        height: clamp(transform.height == null ? 0.75 : transform.height, 0.02, 4),
+        rotation: clamp(transform.rotation || 0, -3600, 3600),
+        mirrorX: Boolean(transform.mirrorX),
+        mirrorY: Boolean(transform.mirrorY)
       },
       provenance: clone(source.provenance || {})
     };
