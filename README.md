@@ -1,14 +1,42 @@
 # AXM Material / Surface Fabric
 
-A local-first material, texture, overlay, decal, surface-composition, material-state, influence, render, vocabulary, and evaluation experiment for AXM.
+A local-first material, texture, overlay, decal, surface-composition, material-state, influence, render, vocabulary, evaluation, and cross-machine exchange experiment for AXM.
 
 Its role is deliberately narrower than “make every visual here”:
 
 > **Increase the quality, reuse, inspectability, and quantity of material / texture ingredients so other AXM visual systems become stronger.**
 
-Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, scans, authored material tools, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render explicit material channels locally through WebGL, grow a deterministic baseline material vocabulary, evaluate that state across controlled render conditions, and export portable donor packs.
+Visuals may be created by Universal Creation, Game Asset Forge, FrameState, image generators, scans, authored material tools, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render explicit material channels locally through WebGL, grow a deterministic baseline material vocabulary, evaluate that state across controlled render conditions, and exchange material state with other machines through portable receipts.
 
 Open `index.html` directly in a modern browser. No install, account, server, AI call, or network connection is required.
+
+## v0.9.0 — Cross-Machine Material Exchange
+
+v0.9 adds a portable receiving + feedback floor above the existing material pipeline:
+
+`producer machine → axm-material-offer/v0.9.0 → payload verification → Material Library / Influence Lab → v0.8 renderer evaluation → explicit install/adoption → axm-material-feedback/v0.9.0`
+
+The Cross-Machine Material Exchange can:
+
+- import a versioned material offer from another standalone machine without contacting that machine or depending on it at runtime;
+- preserve producer system/repository/source identity, source digests, explicit channel declarations, family relationships, tags and producer evidence;
+- accept portable PNG/JPEG/WEBP data URLs or preserve descriptor-only entries as visible HOLD state;
+- independently SHA-256 portable payload bytes in browsers that expose Web Crypto;
+- classify entries as portable-verified, portable-unverified, portable-unhashed, or HOLD;
+- block local installation when a producer-declared SHA-256 does not match the received bytes;
+- derive stable receiver-side material/family IDs from the offer fingerprint plus producer IDs so repeated intake does not create duplicate identity churn;
+- explicitly install a selected offered family into the existing v0.4 Material Library while preserving offer/provenance/verification state;
+- stage a selected family into the v0.5 Influence Lab with every exact producer-declared channel, including metadata-only layers that should remain visible as renderer HOLDs;
+- retain and explicitly restore the previously saved Influence Lab workspace after manual staging;
+- temporarily stage a family through the existing v0.8 evaluation path, persist its evaluation session, and restore the prior Influence Lab workspace automatically;
+- export `axm-material-feedback/v0.9.0` containing exact offer/family references, receiver verification state, compact v0.8 renderer-health evidence, and any explicit local install receipt;
+- explicitly save/load/export the complete `axm-material-exchange-workspace/v0.9.0` state.
+
+The protocol does **not** make Material / Surface Fabric canonical authority over a producer, and a technical score or feedback packet never grants automatic adoption/promotion authority.
+
+Producer-specific adapters for Game Asset Forge, FrameState, Universal Creation or other systems remain separate work in those repositories' own collaboration lanes. v0.9 proves the receiving/feedback contract and provides a documentation fixture; it does not claim those producers already emit this format until their own adapters are implemented and exercised.
+
+See [`docs/CROSS_MACHINE_MATERIAL_EXCHANGE_V0_9.md`](docs/CROSS_MACHINE_MATERIAL_EXCHANGE_V0_9.md) and [`examples/material-offer-v0.9.example.json`](examples/material-offer-v0.9.example.json).
 
 ## v0.8.0 — Material Evaluation / Evolution
 
@@ -16,7 +44,7 @@ v0.8 turns the v0.7 breadth into a controlled test/evolution loop:
 
 `material family or saved recipe → temporary explicit influence workspace → existing v0.6 WebGL renderer → geometry × light observations → bounded technical renderer-health signals → optional deterministic variants → explicit reviewed promotion`
 
-The new Material Evaluation / Evolution lab can:
+The Material Evaluation / Evolution lab can:
 
 - evaluate a selected v0.7 material family through every current light rig;
 - run a quick sphere-only matrix or a deeper sphere + plane + cube matrix;
@@ -24,7 +52,7 @@ The new Material Evaluation / Evolution lab can:
 - measure framebuffer visibility, transparency, mean RGB/alpha, mean luminance, luminance spread/range, near-black/near-white collapse, pixel hashes, renderer holds and receipt state;
 - expose a deliberately bounded `bounded-renderer-health` score for technical sorting;
 - create four deterministic descriptor variants of a selected vocabulary family, preserving parent ID, mutation index, mutation seed, exact changed parameters and descriptor hash;
-- evaluate the parent and variants under the same render matrix;
+- evaluate parent and variants under the same render matrix;
 - rank candidates by renderer completion, mean technical health, then worst-case technical health;
 - preserve representative renders and the complete geometry/light observation matrix;
 - explicitly save/load/export/import `axm-material-evaluation-session/v0.8.0` sessions;
@@ -45,7 +73,7 @@ The path is:
 
 The seed vocabulary includes **39+ material families** across metal, polymer/composite, glass/ceramic, construction/mineral, organic/textile, and environment/FX categories. Every family exposes base-color, normal, roughness, metallic, ambient-occlusion, and height maps; relevant families additionally expose opacity and/or emissive maps. Together with the reusable overlay pack, the declared baseline exceeds **250 reusable material entries**.
 
-The vocabulary includes examples such as brushed/painted/rusted/galvanized steel, anodized aluminum, copper patina, cast iron, scratched chrome, plastics, rubbers, carbon-fiber-like weave, foam, multiple glass states, ceramics, concrete/asphalt/granite/marble/brick/sandstone/plaster, woods, leather-like and woven fabrics, wet/ice/mud/dust surfaces, emissive panels, holographic film, and bio-organic seeds.
+Examples include brushed/painted/rusted/galvanized steel, anodized aluminum, copper patina, cast iron, scratched chrome, plastics, rubbers, carbon-fiber-like weave, foam, multiple glass states, ceramics, concrete/asphalt/granite/marble/brick/sandstone/plaster, woods, leather-like and woven fabrics, wet/ice/mud/dust surfaces, emissive panels, holographic film, and bio-organic seeds.
 
 The overlay pack adds reusable scratches, chips, rust speckles, grime, oil, water streaks, dust, fingerprint-like arcs, edge wear, weld seams, scorch, frost, moss, mud splatter, hazard stripes, emissive circuit lines, and droplets.
 
@@ -76,53 +104,40 @@ The renderer can:
 - load the explicitly saved v0.5 Influence Lab workspace or import its JSON without rewriting that source state;
 - render local sphere, plane, or cube geometry with positions, normals, tangents and UVs and no external 3D dependency;
 - directly sample base-color, tangent-space normal, roughness, metallic, ambient-occlusion, emissive and opacity channels;
-- map declared decal and microdetail layers into the base-color composition while recording that mapping explicitly;
-- preserve height, displacement, color-mask and unassigned state as preserved-only instead of pretending those channels are already rendered;
+- map declared decal and microdetail layers into base-color composition while recording that mapping explicitly;
+- preserve height, displacement, color-mask and unassigned state as preserved-only;
 - preserve missing entry references and payload-less layers as held state;
 - reuse recipe layer order, blend modes, opacity, masks, transforms and tiling when composing channel textures;
-- interpret the existing light rigs in a bounded metallic/roughness WebGL lighting approximation;
+- interpret existing light rigs in a bounded metallic/roughness WebGL lighting approximation;
 - turn the grazing view from a 2D proxy into an actual oblique WebGL camera and use tile/close-up view states in the 3D path;
-- apply sampled AO, normal, metallic, roughness, emissive and opacity state plus existing exposure, saturation, clearcoat-like, Fresnel-like and roughness-override controls;
-- export `axm-material-render-receipt/v0.6.0` evidence containing plan identity, interpreted/preserved channels, held state, WebGL context, draw completion and framebuffer pixel hash;
-- capture WebGL A/B framebuffers and reuse the existing Material Delta engine for exact pixel/region difference evidence;
-- replay the exact same recipe through every declared light rig to produce a cross-light comparison gallery.
+- apply sampled AO, normal, metallic, roughness, emissive and opacity plus exposure, saturation, clearcoat-like, Fresnel-like and roughness-override controls;
+- export `axm-material-render-receipt/v0.6.0` evidence;
+- capture WebGL A/B framebuffers and reuse Material Delta for exact pixel/region difference evidence;
+- replay the same recipe through every declared light rig.
 
-The WebGL renderer is a real executable material-preview path, but it remains deliberately bounded. It does not claim engine parity, PBR certification, HDRI truth, geometric shadow maps, displacement rendering or physical-material correctness.
+The renderer is a real executable material-preview path, but it does not claim engine parity, PBR certification, HDRI truth, geometric shadow maps, displacement rendering or physical-material correctness.
 
 See [`docs/REAL_MATERIAL_RENDERER_V0_6.md`](docs/REAL_MATERIAL_RENDERER_V0_6.md).
 
 ## v0.5.0 — Material Influence Lab
 
-v0.5 adds the next layer above the reusable library:
+v0.5 adds the state layer above the reusable library:
 
 `ingredients → recipe stack → channel routing / masks / transforms / tiling → light rig → shader-like preview controls → view rig → observed preview → A/B state + pixel delta`
 
-The Material Influence Lab can:
+It supports persistent recipes, bottom-to-top stacking, explicit channel targets, masks/transforms/tiling, eight editable light rigs, multiple view states, bounded shader-like controls, A/B comparison, and portable `axm-material-influence-workspace/v0.5.0` state.
 
-- refresh reusable entries from the explicitly saved v0.4 material library, with a weaker current-UI fallback when no saved library is present;
-- create, rename and duplicate persistent material recipes;
-- stack material-library ingredients bottom-to-top;
-- explicitly assign channel routing, blend mode, opacity, masks, scale, rotation, offset and preview tiling per layer;
-- preserve normal, roughness, metallic, AO, height/displacement, opacity and color-mask routing even when the bounded 2D preview does not physically interpret those channels;
-- preview eight distinct light rigs with editable angle, intensity, ambient, environment, shadow and color controls;
-- switch between flat, tiling, close-up and explicitly labeled grazing-angle proxy views;
-- vary bounded shader-like preview influences for exposure, saturation, clearcoat-like highlight, fresnel-like edge response, emissive boost and a roughness-response proxy;
-- capture A/B material influence states and reuse the existing delta engine to measure exact changed preview pixels and regions;
-- explicitly save/load and export/import the complete `axm-material-influence-workspace/v0.5.0` state.
-
-The light/view/shader system is intentionally a local Canvas 2D **influence preview**, not a claim of full PBR, BRDF, HDRI, GPU-shader, engine-parity or physical-light correctness.
+The light/view/shader Canvas 2D preview remains an influence preview, not full PBR/BRDF/HDRI/GPU-shader/engine parity truth.
 
 See [`docs/MATERIAL_INFLUENCE_LAB_V0_5.md`](docs/MATERIAL_INFLUENCE_LAB_V0_5.md).
 
 ## v0.4.0 — Reusable Material Library
 
-v0.4 turns the temporary visual shelf into an explicit persistent reuse layer without making this repository the generator.
-
 The Reusable Material Library can:
 
 - intake exact image payloads from the visual shelf;
 - derive stable content-oriented IDs;
-- preserve recorded source/provenance metadata and portable image data when available;
+- preserve source/provenance metadata and portable image data when available;
 - persist explicitly in browser-local IndexedDB;
 - export/import complete library JSON;
 - import legacy v0.1 and current v0.2 material donor packs;
@@ -130,7 +145,7 @@ The Reusable Material Library can:
 - group ingredients into explicit reusable families;
 - export selected ingredients/families as `axm-material-donor-pack` v0.2.
 
-Channel hints are routing metadata, not claims that this page physically understands the material.
+Channel hints are routing metadata, not automatic physical-material recognition.
 
 See [`docs/MATERIAL_LIBRARY_V0_4.md`](docs/MATERIAL_LIBRARY_V0_4.md).
 
@@ -146,37 +161,21 @@ See [`docs/MATERIAL_DELTA_BRIDGE.md`](docs/MATERIAL_DELTA_BRIDGE.md).
 
 ## v0.2.0 — Trace Down
 
-v0.2 established the observable downward path from a finished canvas:
+v0.2 established the observable downward path:
 
 `IMAGE → BUILD → PIXELS → FILE → BITS`
 
-It intentionally does not pretend that final PNG bytes recover hidden image-generator internals or original intent.
+It intentionally does not pretend final PNG bytes recover hidden generator internals or original intent.
 
 See [`docs/TRACE_DOWN_EXPERIMENT.md`](docs/TRACE_DOWN_EXPERIMENT.md).
 
 ## Existing material / surface capability
 
-The working page now provides:
-
-- local PNG / JPG / WEBP import and drag/drop;
-- transparent layer composition;
-- blend modes, opacity, position, scale, rotation, visibility, ordering, duplicate/fit/center;
-- configurable workspace dimensions and transparent PNG export;
-- full portable workspace-state JSON export/import;
-- explicit browser-local save/load;
-- state snapshots and changed-path diffs;
-- deterministic local demo visuals;
-- persistent reusable material-library entries and families;
-- persistent material influence recipes with explicit stacking, routing, light/view and shader-like preview state;
-- a local WebGL material renderer for explicit base-color/normal/roughness/metallic/AO/emissive/opacity interpretation and framebuffer evidence;
-- a deterministic baseline vocabulary of hundreds of reusable family maps and overlays;
-- bounded batch evaluation across light rigs and geometries;
-- deterministic parent→variant material descriptor evolution with explicit mutation state;
-- explicit reviewed candidate promotion with install receipts.
+The working page now provides local image intake and composition, portable state, snapshots/diffs, persistent material library/families, influence recipes, real WebGL material rendering, hundreds of deterministic seed maps/overlays, bounded batch evaluation/evolution, reviewed promotion receipts, and versioned cross-machine material offer/feedback interchange.
 
 ## Capability first
 
-The project does **not** declare the seed vocabulary or the v0.8 technical ranking to be a universal material ontology or universal quality function. We use real visual ingredients and working operations first, inspect what state the software actually requires, and allow the vocabulary/evaluation rules to grow or be replaced as stronger evidence appears.
+The project does **not** declare the seed vocabulary, v0.8 technical ranking, or v0.9 exchange channel vocabulary to be a universal material ontology or universal quality function. Real sources and working operations come first; schemas are kept small enough to evolve as stronger evidence appears.
 
 See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
@@ -184,23 +183,23 @@ See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
 Internal AXM work is judged against the roots:
 
-- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, synthetic source provenance, interpreted render channels, bounded technical evaluation, preserved-only state, inference, and unknowns.
-- **Agency / non-domination** — generation, library installation, staging, evaluation, candidate selection, export, rendering, and comparison remain explicit local actions; technical rank never silently becomes promotion authority.
-- **Continuity** — stable IDs, descriptors, seeds, mutation lineage, evaluation sessions, framebuffer evidence, install receipts, exported state, persistent library entries, recipes, families, render receipts and donor packs preserve what actually happened.
-- **Wisdom before speed** — gain useful breadth and technical test coverage without pretending synthetic seeds or renderer-health scores are measured physical truth, aesthetic judgment, or universal preference.
+- **Truth** — distinguish producer declarations, exact byte evidence, receiver verification, observed state, routing hints, synthetic provenance, interpreted render channels, bounded technical evaluation, preserved-only state, inference, and unknowns.
+- **Agency / non-domination** — generation, exchange import, verification, installation, staging, evaluation, candidate selection, feedback export, rendering, and producer adoption remain explicit actions; technical rank never silently becomes promotion authority.
+- **Continuity** — stable IDs, offer fingerprints, producer identity, hashes, descriptors, mutation lineage, evaluation sessions, framebuffer evidence, install/feedback receipts, persistent library state, recipes, families, render receipts and donor packs preserve what happened.
+- **Wisdom before speed** — packets are not automatically trusted because they come from another AXM machine; byte mismatch and missing state remain visible, and technical scores or feedback never become silent aesthetic/physical truth.
 
 ## Tests
 
-The browser page itself has no build dependency. Pure helpers can be checked with Node:
+Pure helpers can be checked with Node:
 
 ```bash
 npm test
 ```
 
-CI syntax-checks all browser JavaScript. Tests cover state primitives, trace/delta behavior, library identity and donor round trips, influence recipe state, renderer plans/receipts/geometry, v0.7 vocabulary uniqueness/breadth/category/channel coverage/deterministic sampling/map bounds/normal-map normalization/overlay variation/stable entry IDs/synthetic provenance, plus v0.8 framebuffer summaries, technical hold/signal classification, aggregate evaluation, deterministic variant lineage, bounded mutations, ranking semantics and portable evaluation-session validation.
+CI syntax-checks all browser JavaScript. Tests cover state/trace/delta/library/influence/renderer behavior, v0.7 vocabulary breadth/determinism/provenance, v0.8 renderer-health/evolution/session semantics, and v0.9 offer validation, duplicate/missing-reference rejection, portable/HOLD classification, stable receiver identity, library-bundle conversion, evaluation feedback references, and no-automatic-promotion truth boundaries.
 
 ## Truth boundary
 
-The page can directly observe its own build metadata, pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences, exact reusable image payloads, v0.5 influence state, v0.6 WebGL framebuffer output, v0.7 deterministic seed descriptors/generated payloads, and v0.8 controlled renderer-health observations and deterministic descriptor mutations.
+The page can directly observe its own runtime state, pixels, encoded PNG representation, controlled lineage, reusable payloads, influence recipes, WebGL framebuffer output, deterministic seed descriptors/maps, bounded renderer-health observations, deterministic variants, imported v0.9 offer bytes, and receiver-side payload hashes.
 
-It does not claim automatic PBR correctness, physical-material recognition, measured BRDF data, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, HDRI certification, cross-engine render parity, cross-GPU bit-for-bit framebuffer identity, geometric shadow correctness, displacement rendering, scan-grade material quality, that the highest technical rank is visually best, or causal states that were never recorded/exposed. The vocabulary provides a reproducible baseline; v0.8 adds bounded renderer-path evidence and explicit variation without turning that evidence into silent taste or physical-truth claims.
+It does not claim automatic PBR correctness, physical-material recognition, measured BRDF data, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, HDRI certification, cross-engine render parity, cross-GPU bit-for-bit identity, geometric shadow correctness, displacement rendering, scan-grade quality, that the highest technical rank is visually best, that producer declarations are true merely because they were imported, or that any producer already implements v0.9 until its own adapter is separately built and exercised.
