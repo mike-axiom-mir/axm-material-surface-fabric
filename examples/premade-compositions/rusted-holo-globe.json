@@ -1,0 +1,53 @@
+{
+  "format": "axm-premade-composition",
+  "version": "0.12.0",
+  "id": "premade-example-rusted-holo-globe",
+  "name": "rusted holo globe",
+  "seed": "example-rusted-holo-globe",
+  "canvas": {"width": 1024, "height": 1024, "transparent": true},
+  "layers": [
+    {
+      "id": "base-globe",
+      "name": "gunmetal material globe",
+      "assetId": "material-globes",
+      "cell": {"row": 0, "column": 2},
+      "crop": null,
+      "visible": true,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {"x": 0.5, "y": 0.5, "width": 0.78, "height": 0.78, "rotation": 0, "mirrorX": false, "mirrorY": false},
+      "provenance": {"rule": "explicit-example-base"}
+    },
+    {
+      "id": "rust-window",
+      "name": "rust corrosion crop",
+      "assetId": "rust-corrosion",
+      "cell": null,
+      "crop": {"x": 0.25, "y": 0.25, "width": 0.25, "height": 0.25, "samplingGrid": "4x4"},
+      "visible": true,
+      "opacity": 0.52,
+      "blendMode": "overlay",
+      "transform": {"x": 0.48, "y": 0.52, "width": 0.72, "height": 0.72, "rotation": -8, "mirrorX": false, "mirrorY": false},
+      "provenance": {"rule": "explicit-coarse-window", "semanticSegmentationClaim": false}
+    },
+    {
+      "id": "holo-window",
+      "name": "radial hologram crop",
+      "assetId": "radial-holograms",
+      "cell": null,
+      "crop": {"x": 0.3333333333, "y": 0.3333333333, "width": 0.1666666667, "height": 0.1666666667, "samplingGrid": "6x6"},
+      "visible": true,
+      "opacity": 0.66,
+      "blendMode": "screen",
+      "transform": {"x": 0.5, "y": 0.5, "width": 0.9, "height": 0.9, "rotation": 0, "mirrorX": false, "mirrorY": false},
+      "provenance": {"rule": "explicit-coarse-window", "semanticSegmentationClaim": false}
+    }
+  ],
+  "notes": "Example of deterministic globe + alpha overlay + holographic FX composition.",
+  "truthBoundary": {
+    "alpha": "Composition preserves source alpha and transparent output unless the caller deliberately changes it.",
+    "segmentation": "Non-grid atlas crops are deterministic sampling windows, not semantic object segmentation.",
+    "physical": "Generated ingredients and their composition are visual state, not measured material physics.",
+    "authority": "Seeded generation proposes a composition; it does not auto-promote or rewrite canonical material state."
+  }
+}

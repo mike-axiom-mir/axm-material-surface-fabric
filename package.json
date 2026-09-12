@@ -1,12 +1,13 @@
 {
   "name": "axm-material-surface-fabric",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
-  "description": "Local-first material/texture composition, reusable library, WebGL rendering, deterministic vocabulary, bounded evaluation/evolution, cross-machine exchange/conformance, and versioned premade alpha/globe visual packs for AXM.",
+  "description": "Local-first material/texture composition, reusable library, WebGL rendering, deterministic vocabulary, bounded evaluation/evolution, cross-machine exchange/conformance, premade alpha/globe packs, and deterministic premade composition for AXM.",
   "scripts": {
-    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js && node tests/exchange-core.test.js && node tests/conformance-core.test.js && node tests/premade-pack-metadata.test.js",
+    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js && node tests/exchange-core.test.js && node tests/conformance-core.test.js && node tests/premade-pack-metadata.test.js && node tests/premade-composer-core.test.js",
     "material:conform": "node tools/material-conformance.js",
     "premade:list": "node tools/premade-assets.js list",
-    "premade:pack": "node tools/premade-assets.js pack"
+    "premade:pack": "node tools/premade-assets.js pack",
+    "premade:compose": "node tools/premade-compose.js"
   }
 }

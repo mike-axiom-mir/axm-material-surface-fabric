@@ -38,9 +38,17 @@ jobs:
           node --check exchange-core.js
           node --check material-exchange.js
           node --check conformance-core.js
+          node --check premade-pack.js
+          node --check premade-composer-core.js
+          node --check premade-composer.js
           node --check tools/material-conformance.js
           node --check tools/premade-assets.js
+          node --check tools/premade-compose.js
       - name: Python syntax
         run: python -m py_compile tools/install-premade-pack.py
-      - name: State, trace, delta, library, influence, renderer, vocabulary, evaluation, exchange, conformance, and premade-pack tests
+      - name: Full deterministic material tests
         run: npm test
+      - name: Premade composer CLI smoke test
+        run: |
+          node tools/premade-compose.js seed ci-proof --base material --layers 4 --out build/premade-ci.json
+          node -e "const x=require('./build/premade-ci.json'); if(!x.recipe || !x.plan || x.recipe.layers.length !== 5) process.exit(1)"
