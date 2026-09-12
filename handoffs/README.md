@@ -1,8 +1,30 @@
 # Material Exchange Producer Handoffs
 
-These files exist so the producer-side adapters can be built in each standalone repository's **own persistent repo chat / PR lane** without losing the v0.9 receiver contract or repeating discovery work.
+These files exist so producer/consumer-side adapters can be built in each standalone repository's **own persistent repo chat / PR lane** without losing the Material / Surface Fabric contracts or repeating discovery work.
 
-## Receiver and verifier already implemented
+## v0.18 downstream capability exchange
+
+v0.18 adds a broader outward capability contract beside the older material-offer protocol:
+
+- `axm-material-capability-pack / v0.18.0`
+- `axm-material-use-feedback / v0.18.0`
+
+A capability pack can carry material entries/families, v0.14 alpha sprite candidates, v0.12 recipes, v0.15 patterns, explicit v0.13 keepers, v0.16 guided recipes, and explicitly kept v0.17 loop descendants.
+
+The downstream machine reports what it actually did using explicit events such as `validated`, `rendered`, `adopted`, `modified`, `rejected`, and `reused`, each with PASS/HOLD/REJECT outcome and exact capability IDs.
+
+Use:
+
+- `handoffs/CAPABILITY_EXCHANGE_ADAPTER_V0_18.md`
+- `docs/CAPABILITY_EXCHANGE_V0_18.md`
+
+Suggested downstream repo-chat instruction:
+
+> `/returncore /soulcheck Read mike-axiom-mir/axm-material-surface-fabric/handoffs/CAPABILITY_EXCHANGE_ADAPTER_V0_18.md and build the smallest native v0.18 capability-pack consumer + use-feedback adapter in this repo's existing persistent lane. Preserve this repo's own sovereignty and truth boundaries. Do not auto-adopt source state; return PASS/HOLD/REJECT evidence with exact capability IDs.`
+
+This work belongs in the downstream repository. Material / Surface Fabric owns the export/verification/usage-ledger side only.
+
+## v0.9 receiver and v0.10 verifier already implemented
 
 Material / Surface Fabric accepts:
 
@@ -59,22 +81,26 @@ Suggested repo-chat instruction:
 
 ## Integration order
 
-Recommended order for the first real circulation proof:
+Recommended order for the first real v0.18 use proof:
 
-1. **Game Asset Forge** — it already owns several explicit native material/PBR authoring paths and can produce a strong real material-family offer.
-2. **Universal Creation** — the opposite-direction donor adapter already exists, so a reverse offer adapter creates a clean bidirectional proof.
-3. **FrameState** — connect after the interchange is exercised by material-native producers; preserve its especially important canonical-project vs rendered-realization distinction.
+1. **Universal Creation** — it already consumes Material / Surface state and is a natural first source of actual adoption/reuse evidence.
+2. **Game Asset Forge** — material-native state can prove whether texture/sprite/recipe capabilities survive asset production.
+3. **FrameState** — realization feedback can prove actual render/use while preserving canonical-vs-realization separation.
 
-This order is pragmatic, not constitutional. Any producer can connect first if its own repo lane is ready.
+This order is pragmatic, not constitutional. Any downstream machine can connect first if its own repo lane is ready.
 
 ## Cross-repo stop condition
 
-The exchange experiment becomes meaningfully closed-loop when at least one producer demonstrates:
+The broader capability exchange becomes meaningfully exercised when at least one downstream repository demonstrates:
 
-`producer canonical/source material state -> v0.9 offer -> v0.10 conformance -> receiver byte verification -> Surface Fabric renderer/evaluation -> v0.9 feedback -> v0.10 feedback round-trip check -> producer feedback reader`
+`Surface Fabric capability -> v0.18 pack -> downstream validation/use -> explicit v0.18 feedback -> Surface Fabric feedback validation -> local usage ledger`
 
 with no hidden runtime coupling and no automatic canonical rewrite on either side.
 
+The older material offer loop remains valid independently:
+
+`producer canonical/source material state -> v0.9 offer -> v0.10 conformance -> receiver byte verification -> Surface Fabric renderer/evaluation -> v0.9 feedback -> v0.10 feedback round-trip check -> producer feedback reader`
+
 ## Root invariant
 
-The Surface Fabric is a receiving/evaluation/reuse floor, not a central owner of other machines' state. Producer machines remain sovereign over their own canonical state; conformance and feedback are evidence, not authority.
+Material / Surface Fabric is a receiving/evaluation/reuse/export floor, not a central owner of other machines' state. Producer and consumer machines remain sovereign over their own canonical state; conformance, adoption, rejection, and reuse feedback are evidence, not authority.
