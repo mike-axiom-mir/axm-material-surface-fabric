@@ -21,5 +21,7 @@ jobs:
         run: |
           node --check app.js
           node --check state-core.js
-      - name: State-core tests
+          node --check trace-core.js
+          node --check trace-down.js
+      - name: State and trace tests
         run: npm test
