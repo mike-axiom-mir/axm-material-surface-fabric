@@ -50,6 +50,8 @@ jobs:
           node --check premade-pattern-memory.js
           node --check premade-guide-core.js
           node --check premade-guide.js
+          node --check premade-loop-core.js
+          node --check premade-closed-loop.js
           node --check tools/material-conformance.js
           node --check tools/premade-assets.js
           node --check tools/premade-compose.js
@@ -58,6 +60,7 @@ jobs:
           node --check tools/premade-sprites.js
           node --check tools/premade-patterns.js
           node --check tools/premade-guide.js
+          node --check tools/premade-loop.js
       - name: Python syntax
         run: python -m py_compile tools/install-premade-pack.py
       - name: Full deterministic material tests
@@ -117,3 +120,11 @@ jobs:
           ANCHOR=$(node -e "const x=require('./build/ci-guide-library.json'); process.stdout.write(x.patterns[0].id)")
           node tools/premade-guide.js auto build/ci-guide-library.json "$ANCHOR" --donors 2 --seed ci-guided --max-layers 5 --out build/ci-guided.json
           node -e "const x=require('./build/ci-guided.json'); if(x.format!=='axm-premade-guided-composition-receipt'||x.version!=='0.16.0'||x.recipe.canvas.transparent!==true||x.donorPatternIds.length!==2||x.selection.length<3) process.exit(1)"
+      - name: Closed-loop memory CLI smoke test
+        run: |
+          node tools/premade-loop.js start build/ci-guided.json --seed ci-loop --variants 4 --strength low --out build/ci-loop.json
+          node -e "const x=require('./build/ci-loop.json'); if(x.format!=='axm-premade-closed-loop-session'||x.version!=='0.17.0'||x.evolution.candidates.length!==4||x.execution.pixelEvidenceAttached!==false) process.exit(1)"
+          CID=$(node -e "const x=require('./build/ci-loop.json'); process.stdout.write(x.evolution.candidates[0].id)")
+          node tools/premade-loop.js keep build/ci-loop.json "$CID" --out build/ci-loop-kept.json
+          node tools/premade-loop.js commit build/ci-loop-kept.json build/ci-guide-library.json --out build/ci-loop-committed.json --library-out build/ci-guide-library-next.json --receipt-out build/ci-memory.json
+          node -e "const s=require('./build/ci-loop-committed.json'),m=require('./build/ci-memory.json'),l=require('./build/ci-guide-library-next.json'); if(s.state!=='MEMORY_COMMITTED'||m.format!=='axm-premade-memory-update-receipt'||m.version!=='0.17.0'||m.keeperCount!==1||l.summary.keeperRecipes<4) process.exit(1)"
