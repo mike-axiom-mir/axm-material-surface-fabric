@@ -1,0 +1,14 @@
+.premade-evolution-panel { grid-column: 1 / -1; }
+.premade-evo-toolbar, .premade-evo-actions { display:flex; flex-wrap:wrap; gap:.65rem; align-items:end; margin:.8rem 0; }
+.premade-evo-toolbar label { display:flex; flex-direction:column; gap:.25rem; min-width:120px; }
+.premade-evo-toolbar input, .premade-evo-toolbar select { min-height:36px; }
+.premade-evo-summary { padding:.65rem .8rem; border:1px solid rgba(255,255,255,.1); border-radius:10px; background:rgba(255,255,255,.03); margin-bottom:.8rem; }
+.premade-evo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:.75rem; }
+.premade-evo-card { appearance:none; text-align:left; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:.55rem; background:rgba(7,12,18,.7); color:inherit; cursor:pointer; }
+.premade-evo-card:hover, .premade-evo-card.active { border-color:rgba(109,220,255,.7); }
+.premade-evo-card.kept { box-shadow:inset 0 0 0 1px rgba(140,255,178,.45); }
+.premade-evo-card img { width:100%; aspect-ratio:1; object-fit:contain; border-radius:8px; background:repeating-conic-gradient(rgba(255,255,255,.04) 0 25%,rgba(255,255,255,.08) 0 50%) 50%/18px 18px; }
+.premade-evo-card-head { display:flex; justify-content:space-between; gap:.5rem; margin-top:.45rem; }
+.premade-evo-card-meta { font-size:.78rem; opacity:.75; margin-top:.2rem; }
+.premade-evo-detail { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin-top:.8rem; }
+@media (max-width:900px) { .premade-evo-detail { grid-template-columns:1fr; } }
