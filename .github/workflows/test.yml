@@ -23,5 +23,7 @@ jobs:
           node --check state-core.js
           node --check trace-core.js
           node --check trace-down.js
-      - name: State and trace tests
+          node --check delta-core.js
+          node --check material-delta.js
+      - name: State, trace, and delta tests
         run: npm test
