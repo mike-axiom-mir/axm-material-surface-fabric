@@ -31,5 +31,7 @@ jobs:
           node --check influence-lab.js
           node --check renderer-core.js
           node --check renderer-bridge.js
-      - name: State, trace, delta, library, influence, and renderer tests
+          node --check material-vocabulary-core.js
+          node --check material-vocabulary.js
+      - name: State, trace, delta, library, influence, renderer, and vocabulary tests
         run: npm test
