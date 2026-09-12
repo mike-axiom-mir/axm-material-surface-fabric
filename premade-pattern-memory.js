@@ -12,7 +12,10 @@
   let library=null;
   let selectedPatternId=null;
   let lastInstance=null;
+  let lastRenderReceipt=null;
+  const imageCache=new Map();
   const storageKey='axm-premade-pattern-library-v0.15.0';
+  const blendToCanvas={normal:'source-over',multiply:'multiply',screen:'screen',overlay:'overlay','soft-light':'soft-light','hard-light':'hard-light',lighter:'lighter',difference:'difference'};
 
   const panel=document.createElement('section');
   panel.className='panel premade-pattern-panel';
@@ -48,14 +51,15 @@
         <div class="pattern-instantiator">
           <label>Seed<input id="patternSeed" value="pattern-001" /></label>
           <label><span>Reuse observed exact sprites</span><input id="patternSpriteReuse" type="checkbox" checked /></label>
-          <button class="button primary" id="patternInstantiate" disabled>Instantiate pattern</button>
-          <button class="button accent" id="patternSendComposer" disabled>Send → Composer</button>
-          <button class="button" id="patternExportInstance" disabled>Export instance</button>
+          <button class="button primary" id="patternInstantiate" disabled>Instantiate + render</button>
+          <button class="button" id="patternExportInstance" disabled>Export instance JSON</button>
+          <button class="button accent" id="patternExportPng" disabled>Export transparent PNG</button>
         </div>
       </section>
 
       <section class="pattern-subpanel">
-        <div class="influence-subheading"><strong>Instance receipt</strong><span>proposal only</span></div>
+        <div class="influence-subheading"><strong>Pattern instance</strong><span id="patternRenderState">proposal only</span></div>
+        <div class="pattern-canvas-wrap"><canvas id="patternCanvas" width="512" height="512"></canvas></div>
         <pre id="patternOutput" class="state-output pattern-output"></pre>
       </section>
     </div>
@@ -68,15 +72,26 @@
     packCount:panel.querySelector('#patternPackCount'),sourcePacks:panel.querySelector('#patternSourcePacks'),count:panel.querySelector('#patternCount'),
     list:panel.querySelector('#patternList'),selected:panel.querySelector('#patternSelected'),details:panel.querySelector('#patternDetails'),
     seed:panel.querySelector('#patternSeed'),spriteReuse:panel.querySelector('#patternSpriteReuse'),instantiate:panel.querySelector('#patternInstantiate'),
-    sendComposer:panel.querySelector('#patternSendComposer'),exportInstance:panel.querySelector('#patternExportInstance'),output:panel.querySelector('#patternOutput')
+    exportInstance:panel.querySelector('#patternExportInstance'),exportPng:panel.querySelector('#patternExportPng'),output:panel.querySelector('#patternOutput'),
+    canvas:panel.querySelector('#patternCanvas'),renderState:panel.querySelector('#patternRenderState')
   };
 
   function escapeHtml(value) {
     return String(value==null?'':value).replace(/[&<>"']/g,(ch)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   }
-  function download(name,value) {
-    const blob=new Blob([typeof value==='string'?value:JSON.stringify(value,null,2)],{type:'application/json'});
+  function downloadJson(name,value) {
+    const blob=new Blob([JSON.stringify(value,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  function downloadBlob(name,blob) {
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+  function loadImage(path) {
+    if (imageCache.has(path)) return imageCache.get(path);
+    const promise=new Promise((resolve,reject)=>{
+      const image=new Image(); image.onload=()=>resolve(image); image.onerror=()=>reject(new Error(`missing runtime asset: ${path}`)); image.src=path;
+    });
+    imageCache.set(path,promise); return promise;
   }
   function renderSources() {
     el.packCount.textContent=String(sourcePacks.length);
@@ -89,28 +104,58 @@
     el.count.textContent=String(patterns.length);
     el.exportLibrary.disabled=!library; el.saveLocal.disabled=!library;
     el.list.innerHTML=patterns.length ? patterns.map((pattern)=>`<button class="pattern-row${pattern.id===selectedPatternId?' active':''}" data-pattern="${escapeHtml(pattern.id)}"><span><strong>${escapeHtml(pattern.id)}</strong><small>${pattern.slots.length} layers · support ${pattern.support}</small></span><span class="pattern-support">${pattern.support}</span></button>`).join('') : '<div class="pattern-empty">No learned patterns yet.</div>';
-    el.list.querySelectorAll('[data-pattern]').forEach((button)=>button.addEventListener('click',()=>{selectedPatternId=button.dataset.pattern;lastInstance=null;renderPatterns();renderDetails();}));
+    el.list.querySelectorAll('[data-pattern]').forEach((button)=>button.addEventListener('click',()=>{selectedPatternId=button.dataset.pattern;lastInstance=null;lastRenderReceipt=null;renderPatterns();renderDetails();clearCanvas();}));
   }
   function renderDetails() {
     const pattern=selectedPattern();
     if (!pattern) {
       el.selected.textContent='none'; el.details.innerHTML='<div class="pattern-empty">Select a pattern.</div>';
-      el.instantiate.disabled=true; el.sendComposer.disabled=true; el.exportInstance.disabled=true; el.output.textContent=''; return;
+      el.instantiate.disabled=true; el.exportInstance.disabled=true; el.exportPng.disabled=true; el.output.textContent=''; return;
     }
     el.selected.textContent=`support ${pattern.support}`;
     const slots=pattern.slots.map((slot)=>`<div class="pattern-slot"><strong>${slot.order+1}. ${escapeHtml(slot.role)}</strong><span>${escapeHtml(slot.kind)} · ${escapeHtml(slot.category)}</span><small>${escapeHtml(Object.entries(slot.sourceTypeCounts||{}).map(([k,v])=>`${k}:${v}`).join(' · '))}</small></div>`).join('');
     el.details.innerHTML=`<div class="pattern-summary"><div><span>Support</span><strong>${pattern.support}</strong></div><div><span>Sources</span><strong>${pattern.sourcePackIds.length}</strong></div><div><span>Layers</span><strong>${pattern.slots.length}</strong></div><div><span>Score evidence</span><strong>${pattern.technicalScore?`${Math.round(pattern.technicalScore.mean)}`:'n/a'}</strong></div></div><div class="pattern-slots">${slots}</div><p class="pattern-boundary">Support is recurrence among explicit keepers only. It is not a taste or quality vote.</p>`;
     el.instantiate.disabled=false;
-    el.sendComposer.disabled=!lastInstance;
     el.exportInstance.disabled=!lastInstance;
-    el.output.textContent=lastInstance?JSON.stringify(lastInstance,null,2):'';
+    el.exportPng.disabled=!(lastInstance&&lastRenderReceipt&&lastRenderReceipt.heldLayers.length===0);
+    el.output.textContent=lastInstance?JSON.stringify({instance:lastInstance,render:lastRenderReceipt},null,2):'';
   }
   function setLibrary(next,status) {
     const validation=core.validateLibrary(next);
     if (!validation.ok) throw new Error(validation.reason);
-    library=next; selectedPatternId=library.patterns[0]&&library.patterns[0].id||null; lastInstance=null;
+    library=next; selectedPatternId=library.patterns[0]&&library.patterns[0].id||null; lastInstance=null; lastRenderReceipt=null;
     el.status.textContent=status || `${library.summary.keeperRecipes} keepers → ${library.patterns.length} patterns`;
-    renderPatterns(); renderDetails();
+    renderPatterns(); renderDetails(); clearCanvas();
+  }
+  function clearCanvas() {
+    const ctx=el.canvas.getContext('2d'); ctx.clearRect(0,0,el.canvas.width,el.canvas.height); el.renderState.textContent='proposal only';
+  }
+  async function renderInstance(instance) {
+    const plan=composer.compilePlan(instance.recipe,pack);
+    const size=512; el.canvas.width=size; el.canvas.height=size;
+    const ctx=el.canvas.getContext('2d'); ctx.clearRect(0,0,size,size);
+    const rendered=[],held=[];
+    for (const layer of plan.layers) {
+      if (!layer.visible) continue;
+      try {
+        const image=await loadImage(layer.resourcePath);
+        const s=layer.sourceRect,t=layer.transform;
+        const dw=t.width*size,dh=t.height*size;
+        ctx.save(); ctx.globalAlpha=layer.opacity; ctx.globalCompositeOperation=blendToCanvas[layer.blendMode]||'source-over';
+        ctx.translate(t.x*size,t.y*size); ctx.rotate(t.rotation*Math.PI/180); ctx.scale(t.mirrorX?-1:1,t.mirrorY?-1:1);
+        ctx.drawImage(image,s.x,s.y,s.width,s.height,-dw/2,-dh/2,dw,dh); ctx.restore();
+        rendered.push({layerId:layer.id,assetId:layer.assetId,sourceType:layer.sourceType});
+      } catch (error) { held.push({layerId:layer.id,assetId:layer.assetId,reason:error.message}); }
+    }
+    lastRenderReceipt={
+      format:'axm-premade-pattern-render-receipt',version:core.VERSION,instanceId:instance.id,recipeFingerprint:instance.recipeFingerprint,
+      transparentOutput:true,renderedLayers:rendered,heldLayers:held,
+      truthBoundary:'Local Canvas evidence only; missing v0.11 runtime assets remain HOLD. Pattern support is not aesthetic authority.'
+    };
+    el.renderState.textContent=held.length?`rendered ${rendered.length} · HOLD ${held.length}`:`rendered ${rendered.length}`;
+    el.exportPng.disabled=held.length!==0;
+    el.output.textContent=JSON.stringify({instance:lastInstance,render:lastRenderReceipt},null,2);
+    return lastRenderReceipt;
   }
 
   el.packInput.addEventListener('change',async()=>{
@@ -123,8 +168,7 @@
         accepted.push(parsed);
       }
       sourcePacks=sourcePacks.concat(accepted);
-      el.status.textContent=`${accepted.length} keeper pack(s) added`;
-      renderSources();
+      el.status.textContent=`${accepted.length} keeper pack(s) added`; renderSources();
     } catch (error) { el.status.textContent=`import failed: ${error.message}`; }
     el.packInput.value='';
   });
@@ -132,21 +176,20 @@
     try { setLibrary(core.learnPatternLibrary(sourcePacks,pack),`${sourcePacks.length} packs aggregated`); }
     catch (error) { el.status.textContent=`learn failed: ${error.message}`; }
   });
-  el.instantiate.addEventListener('click',()=>{
+  el.instantiate.addEventListener('click',async()=>{
     const pattern=selectedPattern(); if (!pattern || !library) return;
     try {
       lastInstance=core.instantiatePattern(library,pattern.id,pack,el.seed.value,{reuseObservedSprites:el.spriteReuse.checked});
-      el.output.textContent=JSON.stringify(lastInstance,null,2); el.sendComposer.disabled=false; el.exportInstance.disabled=false;
-      el.status.textContent=`instantiated ${pattern.id} → ${lastInstance.recipeFingerprint}`;
+      lastRenderReceipt=null; el.exportInstance.disabled=false; el.status.textContent=`instantiated ${pattern.id} → ${lastInstance.recipeFingerprint}`;
+      await renderInstance(lastInstance); renderDetails();
     } catch (error) { el.status.textContent=`instantiate failed: ${error.message}`; }
   });
-  el.sendComposer.addEventListener('click',()=>{
-    if (!lastInstance) return;
-    window.dispatchEvent(new CustomEvent('axm-premade-load-recipe',{detail:{recipe:core.clone(lastInstance.recipe),source:'v0.15-pattern-memory',receipt:core.clone(lastInstance)}}));
-    el.status.textContent=`sent ${lastInstance.recipeFingerprint} to composer`;
+  el.exportLibrary.addEventListener('click',()=>library&&downloadJson(`${library.id}.json`,library));
+  el.exportInstance.addEventListener('click',()=>lastInstance&&downloadJson(`${lastInstance.id}.json`,lastInstance));
+  el.exportPng.addEventListener('click',()=>{
+    if (!lastInstance || !lastRenderReceipt || lastRenderReceipt.heldLayers.length) return;
+    el.canvas.toBlob((blob)=>blob&&downloadBlob(`${lastInstance.id}.png`,blob),'image/png');
   });
-  el.exportLibrary.addEventListener('click',()=>library&&download(`${library.id}.json`,library));
-  el.exportInstance.addEventListener('click',()=>lastInstance&&download(`${lastInstance.id}.json`,lastInstance));
   el.saveLocal.addEventListener('click',()=>{
     if (!library) return;
     localStorage.setItem(storageKey,JSON.stringify(library)); el.status.textContent='pattern library explicitly saved locally';
@@ -156,5 +199,5 @@
     catch (error) { el.status.textContent=`load failed: ${error.message}`; }
   });
 
-  renderSources(); renderPatterns(); renderDetails();
+  renderSources(); renderPatterns(); renderDetails(); clearCanvas();
 })();
