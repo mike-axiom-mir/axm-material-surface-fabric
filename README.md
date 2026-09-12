@@ -6,9 +6,30 @@ Its role is deliberately narrower than “make every visual here”:
 
 > **Increase the quality, reuse, inspectability, and quantity of material / texture ingredients so other AXM visual systems become stronger.**
 
-Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, and export reusable donor packs.
+Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, and export portable donor packs.
 
 Open `index.html` directly in a modern browser. No install, account, server, AI call, or network connection is required.
+
+## v0.4.0 — Reusable Material Library
+
+v0.4 turns the temporary visual shelf into an explicit persistent reuse layer without making this repository the generator.
+
+The new Reusable Material Library can:
+
+- intake the exact image payloads currently visible on the material shelf;
+- derive stable content-oriented material entry IDs for repeated intake;
+- preserve recorded source/provenance metadata and portable image data when available;
+- persist the library explicitly in browser-local IndexedDB;
+- export/import the complete library as ordinary JSON;
+- import both legacy v0.1 and current v0.2 `axm-material-donor-pack` files;
+- round-trip donor-pack entries and families without silently flattening their identity;
+- attach editable channel-routing hints such as base-color, normal, roughness, metallic, AO, height, opacity, decal, or unassigned;
+- group selected ingredients into reusable material families only when a real reuse relationship is declared;
+- export selected ingredients/families as `axm-material-donor-pack` v0.2 for explicit downstream adapters.
+
+Channel hints are routing metadata, not claims that this page physically understands the material. The first downstream adapter is intentionally implemented in Universal Creation rather than hidden inside this repository so cross-system compatibility remains testable and explicit.
+
+See [`docs/MATERIAL_LIBRARY_V0_4.md`](docs/MATERIAL_LIBRARY_V0_4.md).
 
 ## v0.3.0 — Material Delta Bridge
 
@@ -71,23 +92,23 @@ See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
 Internal AXM work is judged against the roots:
 
-- **Truth** — distinguish observed state, declared experiment intent, measured output, inference, and unknowns.
+- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, inference, and unknowns.
 - **Agency / non-domination** — local user control; no hidden upload, account, cloud, or remote dependency.
-- **Continuity** — exported state, experiments, lineage, and donor packs preserve what actually happened.
+- **Continuity** — exported state, experiments, lineage, persistent library entries, families, and donor packs preserve what actually happened.
 - **Wisdom before speed** — learn reusable material relationships from controlled use before prematurely imposing a universal schema.
 
 ## Tests
 
-The browser page itself has no build dependency. Pure state/trace/delta helpers can be checked with Node:
+The browser page itself has no build dependency. Pure state/trace/delta/library helpers can be checked with Node:
 
 ```bash
 npm test
 ```
 
-CI also syntax-checks the browser JavaScript. Tests cover stable state primitives, snapshot diffs, import validation, byte hashing, pixel summaries, trace comparison, spatial pixel deltas, region summaries, difference buffers, and transition truth boundaries.
+CI also syntax-checks the browser JavaScript. Tests cover stable state primitives, snapshot diffs, import validation, byte hashing, pixel summaries, trace comparison, spatial pixel deltas, region summaries, difference buffers, transition truth boundaries, stable library IDs, family membership, legacy donor import, and donor-pack round trips.
 
 ## Truth boundary
 
-The page can directly observe its own build metadata, canvas pixels, encoded PNG representation, controlled lineage declarations, and pixel-local differences between same-size captures.
+The page can directly observe its own build metadata, canvas pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences between same-size captures, and the exact reusable image payloads it stores locally.
 
-It does not claim automatic PBR correctness, physical-material recognition, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, or causal states that were never recorded/exposed. Donor-pack consumers also require explicit adapters; exporting a pack does not prove another system already understands it.
+It does not claim automatic PBR correctness, physical-material recognition, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, or causal states that were never recorded/exposed. A donor pack proves portable material data and declared routing metadata exist; downstream usefulness is established only when a separate consumer validates and adapts it.
