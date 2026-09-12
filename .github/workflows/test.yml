@@ -52,7 +52,10 @@ jobs:
           node --check premade-guide.js
           node --check premade-loop-core.js
           node --check premade-closed-loop.js
+          node --check capability-exchange-core.js
+          node --check capability-exchange.js
           node --check tools/material-conformance.js
+          node --check tools/material-capabilities.js
           node --check tools/premade-assets.js
           node --check tools/premade-compose.js
           node --check tools/premade-evolve.js
@@ -128,3 +131,21 @@ jobs:
           node tools/premade-loop.js keep build/ci-loop.json "$CID" --out build/ci-loop-kept.json
           node tools/premade-loop.js commit build/ci-loop-kept.json build/ci-guide-library.json --out build/ci-loop-committed.json --library-out build/ci-guide-library-next.json --receipt-out build/ci-memory.json
           node -e "const s=require('./build/ci-loop-committed.json'),m=require('./build/ci-memory.json'),l=require('./build/ci-guide-library-next.json'); if(s.state!=='MEMORY_COMMITTED'||m.format!=='axm-premade-memory-update-receipt'||m.version!=='0.17.0'||m.keeperCount!==1||l.summary.keeperRecipes<4) process.exit(1)"
+      - name: Capability exchange downstream-use smoke test
+        run: |
+          node tools/material-capabilities.js pack build/ci-memory.json --name "CI Material Capabilities" --out build/ci-capabilities.json
+          node tools/material-capabilities.js check-pack build/ci-capabilities.json
+          node - <<'NODE'
+          const fs=require('fs');
+          const p=require('./build/ci-capabilities.json');
+          if(!p.capabilities.length) process.exit(1);
+          const id=p.capabilities[0].id;
+          fs.writeFileSync('build/ci-use-events.json',JSON.stringify({events:[
+            {capabilityId:id,action:'adopted',outcome:'PASS',evidence:{downstreamId:'ci-asset-1'},derivedIds:['ci-asset-1']},
+            {capabilityId:id,action:'reused',outcome:'PASS',evidence:{downstreamId:'ci-asset-2'},derivedIds:['ci-asset-2']}
+          ]},null,2));
+          NODE
+          node tools/material-capabilities.js feedback build/ci-capabilities.json build/ci-use-events.json --consumer "CI Universal Creation" --repository mike-axiom-mir/axm-universal-creation --out build/ci-use-feedback.json
+          node tools/material-capabilities.js check-feedback build/ci-use-feedback.json build/ci-capabilities.json
+          node tools/material-capabilities.js apply build/ci-use-feedback.json build/ci-capabilities.json --out build/ci-use-ledger.json
+          node -e "const c=require('./capability-exchange-core.js'),l=require('./build/ci-use-ledger.json'),s=c.usageSummary(l); if(s.totalEvents!==2||s.adoptedEvents!==1||s.reusedEvents!==1||s.feedbackReceipts!==1) process.exit(1)"
