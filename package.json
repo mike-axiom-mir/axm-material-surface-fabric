@@ -1,9 +1,9 @@
 {
   "name": "axm-material-surface-fabric",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
-  "description": "Local-first material/texture composition, reusable library, state tracing, donor-pack reuse, and bounded Material Influence Lab recipes for AXM.",
+  "description": "Local-first material/texture composition, reusable library, influence recipes, state tracing, donor-pack reuse, and a bounded real WebGL material renderer for AXM.",
   "scripts": {
-    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js"
+    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js"
   }
 }
