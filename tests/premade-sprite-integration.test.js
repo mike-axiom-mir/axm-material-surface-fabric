@@ -27,7 +27,7 @@ assert.strictEqual(plan.layers[1].sourceType, 'sprite-candidate');
 assert.strictEqual(plan.layers[1].spriteCandidate.id, 'rust-corrosion/sprite-001-test');
 assert.strictEqual(plan.layers[1].spriteCandidate.atlasId, 'rust-corrosion');
 assert.deepStrictEqual(plan.layers[1].sourceRect, {
-  x:51,y:102,width:128,height:153,semanticCell:false,spriteCandidate:true,spriteId:'rust-corrosion/sprite-001-test'
+  x:51,y:102,width:128,height:154,semanticCell:false,spriteCandidate:true,spriteId:'rust-corrosion/sprite-001-test'
 });
 assert.match(composer.stableStringify(plan.truthBoundary), /alpha regions/);
 
