@@ -1,9 +1,9 @@
 {
   "name": "axm-material-surface-fabric",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "private": true,
-  "description": "Local-first material/texture composition, reusable library, influence recipes, real WebGL material rendering, donor-pack reuse, and a deterministic broad material vocabulary for AXM.",
+  "description": "Local-first material/texture composition, reusable library, influence recipes, WebGL material rendering, broad deterministic vocabulary, and bounded material evaluation/evolution for AXM.",
   "scripts": {
-    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js"
+    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js"
   }
 }
