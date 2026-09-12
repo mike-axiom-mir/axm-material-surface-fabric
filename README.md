@@ -1,20 +1,45 @@
 # AXM Material / Surface Fabric
 
-A local-first material, texture, overlay, decal, surface-composition, material-state, influence, and render experiment for AXM.
+A local-first material, texture, overlay, decal, surface-composition, material-state, influence, render, vocabulary, and evaluation experiment for AXM.
 
 Its role is deliberately narrower than “make every visual here”:
 
 > **Increase the quality, reuse, inspectability, and quantity of material / texture ingredients so other AXM visual systems become stronger.**
 
-Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, scans, authored material tools, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render explicit material channels locally through WebGL, grow a deterministic baseline material vocabulary, and export portable donor packs.
+Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, scans, authored material tools, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render explicit material channels locally through WebGL, grow a deterministic baseline material vocabulary, evaluate that state across controlled render conditions, and export portable donor packs.
 
 Open `index.html` directly in a modern browser. No install, account, server, AI call, or network connection is required.
+
+## v0.8.0 — Material Evaluation / Evolution
+
+v0.8 turns the v0.7 breadth into a controlled test/evolution loop:
+
+`material family or saved recipe → temporary explicit influence workspace → existing v0.6 WebGL renderer → geometry × light observations → bounded technical renderer-health signals → optional deterministic variants → explicit reviewed promotion`
+
+The new Material Evaluation / Evolution lab can:
+
+- evaluate a selected v0.7 material family through every current light rig;
+- run a quick sphere-only matrix or a deeper sphere + plane + cube matrix;
+- evaluate the explicitly saved v0.5 Influence Lab workspace as well, allowing imported/external material sources already represented in the recipe contract to use the same evaluation path;
+- measure framebuffer visibility, transparency, mean RGB/alpha, mean luminance, luminance spread/range, near-black/near-white collapse, pixel hashes, renderer holds and receipt state;
+- expose a deliberately bounded `bounded-renderer-health` score for technical sorting;
+- create four deterministic descriptor variants of a selected vocabulary family, preserving parent ID, mutation index, mutation seed, exact changed parameters and descriptor hash;
+- evaluate the parent and variants under the same render matrix;
+- rank candidates by renderer completion, mean technical health, then worst-case technical health;
+- preserve representative renders and the complete geometry/light observation matrix;
+- explicitly save/load/export/import `axm-material-evaluation-session/v0.8.0` sessions;
+- explicitly install a reviewed generated candidate into the persistent material library while recording its evaluation/install receipt;
+- restore the prior saved Influence Lab workspace after temporary evaluation staging.
+
+The technical ranking is **not** an aesthetic, realism, PBR, physical-accuracy, taste, or universal quality score. A candidate is never installed or promoted automatically.
+
+See [`docs/MATERIAL_EVALUATION_V0_8.md`](docs/MATERIAL_EVALUATION_V0_8.md).
 
 ## v0.7.0 — Material Vocabulary Expansion
 
 v0.7 moves from “we have the machinery” to “we also have meaningful reusable breadth.”
 
-The new path is:
+The path is:
 
 `deterministic family descriptor → correlated map set → persistent material library → optional v0.5 recipe staging → v0.6 WebGL render / cross-light evidence → donor-pack reuse`
 
@@ -144,11 +169,14 @@ The working page now provides:
 - persistent reusable material-library entries and families;
 - persistent material influence recipes with explicit stacking, routing, light/view and shader-like preview state;
 - a local WebGL material renderer for explicit base-color/normal/roughness/metallic/AO/emissive/opacity interpretation and framebuffer evidence;
-- a deterministic baseline vocabulary of hundreds of reusable family maps and overlays.
+- a deterministic baseline vocabulary of hundreds of reusable family maps and overlays;
+- bounded batch evaluation across light rigs and geometries;
+- deterministic parent→variant material descriptor evolution with explicit mutation state;
+- explicit reviewed candidate promotion with install receipts.
 
 ## Capability first
 
-The project does **not** declare the v0.7 seed list to be a universal material ontology. We use real visual ingredients and working operations first, inspect what state the software actually requires, and allow the vocabulary to grow or be replaced as stronger evidence appears.
+The project does **not** declare the seed vocabulary or the v0.8 technical ranking to be a universal material ontology or universal quality function. We use real visual ingredients and working operations first, inspect what state the software actually requires, and allow the vocabulary/evaluation rules to grow or be replaced as stronger evidence appears.
 
 See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
@@ -156,10 +184,10 @@ See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
 Internal AXM work is judged against the roots:
 
-- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, synthetic source provenance, interpreted render channels, preserved-only state, inference, and unknowns.
-- **Agency / non-domination** — generation, library installation, staging, export, rendering, and comparison remain explicit local actions.
-- **Continuity** — stable IDs, descriptors, seeds, exported state, experiments, persistent library entries, recipes, families, influence state, render receipts and donor packs preserve what actually happened.
-- **Wisdom before speed** — gain useful breadth without pretending synthetic seeds are measured physical truth; test output and keep stronger sources welcome.
+- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, synthetic source provenance, interpreted render channels, bounded technical evaluation, preserved-only state, inference, and unknowns.
+- **Agency / non-domination** — generation, library installation, staging, evaluation, candidate selection, export, rendering, and comparison remain explicit local actions; technical rank never silently becomes promotion authority.
+- **Continuity** — stable IDs, descriptors, seeds, mutation lineage, evaluation sessions, framebuffer evidence, install receipts, exported state, persistent library entries, recipes, families, render receipts and donor packs preserve what actually happened.
+- **Wisdom before speed** — gain useful breadth and technical test coverage without pretending synthetic seeds or renderer-health scores are measured physical truth, aesthetic judgment, or universal preference.
 
 ## Tests
 
@@ -169,10 +197,10 @@ The browser page itself has no build dependency. Pure helpers can be checked wit
 npm test
 ```
 
-CI syntax-checks all browser JavaScript. Tests cover state primitives, trace/delta behavior, library identity and donor round trips, influence recipe state, renderer plans/receipts/geometry, plus v0.7 vocabulary uniqueness, breadth, category/channel coverage, deterministic sampling, bounded map bytes, normal-map normalization, overlay variation, stable entry IDs and explicit synthetic provenance.
+CI syntax-checks all browser JavaScript. Tests cover state primitives, trace/delta behavior, library identity and donor round trips, influence recipe state, renderer plans/receipts/geometry, v0.7 vocabulary uniqueness/breadth/category/channel coverage/deterministic sampling/map bounds/normal-map normalization/overlay variation/stable entry IDs/synthetic provenance, plus v0.8 framebuffer summaries, technical hold/signal classification, aggregate evaluation, deterministic variant lineage, bounded mutations, ranking semantics and portable evaluation-session validation.
 
 ## Truth boundary
 
-The page can directly observe its own build metadata, pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences, exact reusable image payloads, v0.5 influence state, v0.6 WebGL framebuffer output, and v0.7 deterministic seed descriptors/generated payloads.
+The page can directly observe its own build metadata, pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences, exact reusable image payloads, v0.5 influence state, v0.6 WebGL framebuffer output, v0.7 deterministic seed descriptors/generated payloads, and v0.8 controlled renderer-health observations and deterministic descriptor mutations.
 
-It does not claim automatic PBR correctness, physical-material recognition, measured BRDF data, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, HDRI certification, cross-engine render parity, cross-GPU bit-for-bit framebuffer identity, geometric shadow correctness, displacement rendering, scan-grade material quality, or causal states that were never recorded/exposed. The v0.7 vocabulary provides a reproducible baseline and a route into the existing renderer; quality and suitability remain evidence questions, not metadata assumptions.
+It does not claim automatic PBR correctness, physical-material recognition, measured BRDF data, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, HDRI certification, cross-engine render parity, cross-GPU bit-for-bit framebuffer identity, geometric shadow correctness, displacement rendering, scan-grade material quality, that the highest technical rank is visually best, or causal states that were never recorded/exposed. The vocabulary provides a reproducible baseline; v0.8 adds bounded renderer-path evidence and explicit variation without turning that evidence into silent taste or physical-truth claims.

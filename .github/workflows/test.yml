@@ -33,5 +33,7 @@ jobs:
           node --check renderer-bridge.js
           node --check material-vocabulary-core.js
           node --check material-vocabulary.js
-      - name: State, trace, delta, library, influence, renderer, and vocabulary tests
+          node --check material-evaluation-core.js
+          node --check material-evaluation.js
+      - name: State, trace, delta, library, influence, renderer, vocabulary, and evaluation tests
         run: npm test
