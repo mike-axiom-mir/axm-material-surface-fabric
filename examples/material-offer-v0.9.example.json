@@ -1,0 +1,83 @@
+{
+  "format": "axm-material-offer",
+  "version": "0.9.0",
+  "id": "offer-example-painted-panel",
+  "createdAt": "2026-09-12T09:30:00Z",
+  "producer": {
+    "system": "AXM Producer Example",
+    "repo": null,
+    "sourceId": "example-painted-panel",
+    "sourceDigest": null,
+    "stateKind": "example-detached-material-export",
+    "version": "example",
+    "adapter": "documentation-fixture"
+  },
+  "entries": [
+    {
+      "id": "panel-base",
+      "name": "Painted panel base color",
+      "channel": "base-color",
+      "mime": "image/png",
+      "width": 1,
+      "height": 1,
+      "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z9f8AAAAASUVORK5CYII=",
+      "sha256": null,
+      "source": {
+        "fixture": true,
+        "note": "Documentation payload only; not a quality example."
+      },
+      "tags": ["example", "painted-panel"]
+    },
+    {
+      "id": "panel-roughness",
+      "name": "Painted panel roughness",
+      "channel": "roughness",
+      "mime": "image/png",
+      "width": 1,
+      "height": 1,
+      "dataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z9f8AAAAASUVORK5CYII=",
+      "sha256": null,
+      "source": {
+        "fixture": true,
+        "note": "Documentation payload only; not a physically calibrated roughness map."
+      },
+      "tags": ["example", "painted-panel"]
+    },
+    {
+      "id": "panel-normal-descriptor",
+      "name": "Normal map declared but payload not supplied",
+      "channel": "normal",
+      "mime": "image/png",
+      "width": 0,
+      "height": 0,
+      "dataUrl": null,
+      "sha256": null,
+      "source": {
+        "fixture": true,
+        "note": "Shows the v0.9 metadata-only/HOLD path."
+      },
+      "tags": ["example", "painted-panel", "hold-example"]
+    }
+  ],
+  "families": [
+    {
+      "id": "painted-panel-family",
+      "name": "Painted panel example family",
+      "purpose": "Documentation example showing portable plus metadata-only material state.",
+      "entryIds": [
+        "panel-base",
+        "panel-normal-descriptor",
+        "panel-roughness"
+      ],
+      "tags": ["example", "painted-panel"]
+    }
+  ],
+  "evidence": {
+    "fixture": true,
+    "qualityClaim": false
+  },
+  "truthBoundary": {
+    "fixture": "This example demonstrates packet structure only.",
+    "quality": "The included 1x1 image payloads are documentation fixtures, not useful material assets or physical/PBR evidence."
+  }
+}
