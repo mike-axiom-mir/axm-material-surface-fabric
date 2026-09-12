@@ -45,12 +45,15 @@ jobs:
           node --check premade-evolution.js
           node --check alpha-sprite-core.js
           node --check premade-sprite-lab.js
+          node --check premade-pattern-core.js
+          node --check premade-pattern-memory.js
           node --check tools/material-conformance.js
           node --check tools/premade-assets.js
           node --check tools/premade-compose.js
           node --check tools/premade-evolve.js
           node --check tools/png-rgba.js
           node --check tools/premade-sprites.js
+          node --check tools/premade-patterns.js
       - name: Python syntax
         run: python -m py_compile tools/install-premade-pack.py
       - name: Full deterministic material tests
@@ -66,3 +69,21 @@ jobs:
           node -e "const x=require('./build/evolution-ci.json'); if(x.format!=='axm-premade-evolution-session'||x.version!=='0.13.0'||x.candidates.length!==4||x.execution.pixelEvidenceAttached!==false) process.exit(1)"
       - name: Alpha sprite extractor smoke test
         run: node tools/premade-sprites.js selftest
+      - name: Pattern memory CLI smoke test
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const pack=require('./premade-pack.js');
+          const composer=require('./premade-composer-core.js');
+          const evo=require('./premade-evolution-core.js');
+          const parent=composer.seededRecipe('ci-pattern-parent',pack,{basePool:'weathered',overlayCount:3});
+          const session=evo.createSession(parent,pack,'ci-pattern-session',{variants:2,strength:'low',lockBase:true,allowLayerCountChange:false});
+          evo.keepCandidate(session,session.candidates[0].id,true);
+          evo.keepCandidate(session,session.candidates[1].id,true);
+          fs.writeFileSync('build/ci-keeper-pack.json',JSON.stringify(evo.recipePack(session,'ci keepers'),null,2));
+          NODE
+          node tools/premade-patterns.js learn build/ci-keeper-pack.json --out build/ci-pattern-library.json
+          node -e "const x=require('./build/ci-pattern-library.json'); if(x.format!=='axm-premade-pattern-library'||x.version!=='0.15.0'||!x.patterns.length) process.exit(1)"
+          PATTERN=$(node -e "const x=require('./build/ci-pattern-library.json'); process.stdout.write(x.patterns[0].id)")
+          node tools/premade-patterns.js instantiate build/ci-pattern-library.json "$PATTERN" ci-instance --out build/ci-pattern-instance.json
+          node -e "const x=require('./build/ci-pattern-instance.json'); if(x.format!=='axm-premade-pattern-instance-receipt'||x.version!=='0.15.0'||x.recipe.canvas.transparent!==true) process.exit(1)"
