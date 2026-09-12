@@ -1,0 +1,24 @@
+.premade-guide-panel { grid-column: 1 / -1; }
+.guide-toolbar { display:flex; flex-wrap:wrap; gap:.55rem; align-items:end; margin:.8rem 0; }
+.guide-toolbar label:not(.button) { display:flex; flex-direction:column; gap:.22rem; font-size:.8rem; }
+.guide-toolbar input[type="number"] { width:5.2rem; }
+.guide-toolbar #guideStatus { margin-left:auto; opacity:.75; font-size:.86rem; }
+.guide-layout { display:grid; grid-template-columns:minmax(260px,.9fr) minmax(360px,1.2fr) minmax(320px,1fr); gap:.8rem; }
+.guide-subpanel { border:1px solid var(--line,rgba(255,255,255,.09)); border-radius:14px; padding:.8rem; background:rgba(255,255,255,.025); min-width:0; }
+#guideAnchor { width:100%; min-height:12rem; border-radius:10px; padding:.45rem; background:rgba(0,0,0,.2); color:inherit; border:1px solid rgba(255,255,255,.09); }
+.guide-actions { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:.6rem; }
+.guide-donor-list { display:grid; gap:.42rem; max-height:25rem; overflow:auto; }
+.guide-donor-row { display:grid; grid-template-columns:auto 1fr; gap:.5rem; align-items:start; padding:.55rem .6rem; border:1px solid rgba(255,255,255,.07); border-radius:10px; background:rgba(255,255,255,.025); cursor:pointer; }
+.guide-donor-row:hover { border-color:rgba(127,230,255,.25); }
+.guide-donor-row span { display:grid; gap:.12rem; min-width:0; }
+.guide-donor-row strong { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.guide-donor-row small { opacity:.66; line-height:1.25; }
+.guide-preview-panel .premade-canvas-wrap { aspect-ratio:1/1; max-height:560px; }
+.guide-preview-panel canvas { width:100%; height:100%; object-fit:contain; }
+.guide-summary { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.45rem; margin-bottom:.6rem; }
+.guide-summary > div { padding:.55rem; border-radius:10px; background:rgba(255,255,255,.035); display:flex; flex-direction:column; gap:.15rem; }
+.guide-summary span { opacity:.6; font-size:.72rem; }
+.guide-summary strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.guide-output { min-height:360px; max-height:620px; overflow:auto; }
+@media (max-width:1100px) { .guide-layout { grid-template-columns:1fr; } .guide-toolbar #guideStatus { width:100%; margin-left:0; } }
+@media (max-width:620px) { .guide-summary { grid-template-columns:1fr; } }

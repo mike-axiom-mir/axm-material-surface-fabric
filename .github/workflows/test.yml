@@ -41,12 +41,15 @@ jobs:
           node --check premade-pack.js
           node --check premade-composer-core.js
           node --check premade-composer.js
+          node --check premade-composer-load-bridge.js
           node --check premade-evolution-core.js
           node --check premade-evolution.js
           node --check alpha-sprite-core.js
           node --check premade-sprite-lab.js
           node --check premade-pattern-core.js
           node --check premade-pattern-memory.js
+          node --check premade-guide-core.js
+          node --check premade-guide.js
           node --check tools/material-conformance.js
           node --check tools/premade-assets.js
           node --check tools/premade-compose.js
@@ -54,6 +57,7 @@ jobs:
           node --check tools/png-rgba.js
           node --check tools/premade-sprites.js
           node --check tools/premade-patterns.js
+          node --check tools/premade-guide.js
       - name: Python syntax
         run: python -m py_compile tools/install-premade-pack.py
       - name: Full deterministic material tests
@@ -87,3 +91,29 @@ jobs:
           PATTERN=$(node -e "const x=require('./build/ci-pattern-library.json'); process.stdout.write(x.patterns[0].id)")
           node tools/premade-patterns.js instantiate build/ci-pattern-library.json "$PATTERN" ci-instance --out build/ci-pattern-instance.json
           node -e "const x=require('./build/ci-pattern-instance.json'); if(x.format!=='axm-premade-pattern-instance-receipt'||x.version!=='0.15.0'||x.recipe.canvas.transparent!==true) process.exit(1)"
+      - name: Pattern-guided creation CLI smoke test
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const pack=require('./premade-pack.js');
+          const composer=require('./premade-composer-core.js');
+          const patterns=require('./premade-pattern-core.js');
+          function make(name,base,extra,blend){
+            const r=composer.createRecipe(name,name);
+            r.layers=[
+              composer.normalizeLayer({id:`${name}-base`,assetId:base,cell:{row:0,column:0},blendMode:'normal',opacity:1,transform:{x:.5,y:.5,width:.78,height:.78,rotation:0}},0,pack),
+              composer.normalizeLayer({id:`${name}-extra`,assetId:extra,crop:{x:0,y:0,width:.25,height:.25},blendMode:blend,opacity:.5,transform:{x:.5,y:.5,width:.6,height:.6,rotation:0}},1,pack)
+            ];
+            return r;
+          }
+          const recipes=[
+            make('ci-guide-a','weathered-globes','rust-corrosion','overlay'),
+            make('ci-guide-b','energy-globes','holographic-grids','screen'),
+            make('ci-guide-c','material-globes','mud-dirt','multiply')
+          ];
+          const keeper={format:'axm-premade-recipe-pack',version:'0.13.0',id:'ci-guide-keepers',pack:{format:pack.format,version:pack.version,archiveSha256:pack.binaryPack.sha256},recipes:recipes.map((recipe,index)=>({candidateId:`ci-${index}`,technicalScore:70+index,recipeFingerprint:composer.recipeFingerprint(recipe,pack),recipe}))};
+          fs.writeFileSync('build/ci-guide-library.json',JSON.stringify(patterns.learnPatternLibrary([keeper],pack,'ci guide'),null,2));
+          NODE
+          ANCHOR=$(node -e "const x=require('./build/ci-guide-library.json'); process.stdout.write(x.patterns[0].id)")
+          node tools/premade-guide.js auto build/ci-guide-library.json "$ANCHOR" --donors 2 --seed ci-guided --max-layers 5 --out build/ci-guided.json
+          node -e "const x=require('./build/ci-guided.json'); if(x.format!=='axm-premade-guided-composition-receipt'||x.version!=='0.16.0'||x.recipe.canvas.transparent!==true||x.donorPatternIds.length!==2||x.selection.length<3) process.exit(1)"
