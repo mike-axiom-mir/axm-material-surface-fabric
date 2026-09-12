@@ -1,0 +1,9 @@
+{
+  "name": "axm-material-surface-fabric",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first material/texture composition and state-capture experiment for AXM.",
+  "scripts": {
+    "test": "node tests/state-core.test.js"
+  }
+}
