@@ -43,10 +43,14 @@ jobs:
           node --check premade-composer.js
           node --check premade-evolution-core.js
           node --check premade-evolution.js
+          node --check alpha-sprite-core.js
+          node --check premade-sprite-lab.js
           node --check tools/material-conformance.js
           node --check tools/premade-assets.js
           node --check tools/premade-compose.js
           node --check tools/premade-evolve.js
+          node --check tools/png-rgba.js
+          node --check tools/premade-sprites.js
       - name: Python syntax
         run: python -m py_compile tools/install-premade-pack.py
       - name: Full deterministic material tests
@@ -60,3 +64,5 @@ jobs:
         run: |
           node tools/premade-evolve.js seed ci-evolve --base weathered --layers 4 --variants 4 --strength medium --out build/evolution-ci.json
           node -e "const x=require('./build/evolution-ci.json'); if(x.format!=='axm-premade-evolution-session'||x.version!=='0.13.0'||x.candidates.length!==4||x.execution.pixelEvidenceAttached!==false) process.exit(1)"
+      - name: Alpha sprite extractor smoke test
+        run: node tools/premade-sprites.js selftest

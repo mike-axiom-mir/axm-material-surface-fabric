@@ -76,8 +76,8 @@
     const [width, height] = runtimeSize(pack);
     const x = clamp(crop && crop.x, 0, 1);
     const y = clamp(crop && crop.y, 0, 1);
-    const w = clamp(crop && crop.width, 0.01, 1 - x);
-    const h = clamp(crop && crop.height, 0.01, 1 - y);
+    const w = clamp(crop && crop.width, 0.000001, 1 - x);
+    const h = clamp(crop && crop.height, 0.000001, 1 - y);
     const x0 = Math.floor(x * width);
     const y0 = Math.floor(y * height);
     const x1 = Math.max(x0 + 1, Math.floor((x + w) * width));
@@ -100,6 +100,29 @@
     const mode = String(value || 'normal').toLowerCase();
     return BLEND_MODES.includes(mode) ? mode : 'normal';
   }
+  function normalizeBounds(raw) {
+    const source = raw || {};
+    const x = clamp(source.x, 0, 1);
+    const y = clamp(source.y, 0, 1);
+    const width = clamp(source.width, 0.000001, 1 - x);
+    const height = clamp(source.height, 0.000001, 1 - y);
+    if (width <= 0 || height <= 0) throw new TypeError('Sprite candidate normalized bounds must be positive.');
+    return { x, y, width, height };
+  }
+  function normalizeSpriteCandidate(raw, assetId) {
+    if (!raw) return null;
+    const id = String(raw.id || raw.spriteId || '').trim();
+    if (!id) throw new TypeError('spriteCandidate.id is required.');
+    const bounds = normalizeBounds(raw.normalizedBounds || raw.bounds);
+    return {
+      id,
+      atlasId: String(raw.atlasId || assetId || '').trim() || null,
+      normalizedBounds: bounds,
+      sourceIndexId: raw.sourceIndexId ? String(raw.sourceIndexId) : null,
+      sourceBasis: raw.sourceBasis ? String(raw.sourceBasis) : null,
+      canonicalSourceIndex: Boolean(raw.canonicalSourceIndex)
+    };
+  }
   function normalizeLayer(raw, index, pack) {
     const source = raw || {};
     const transform = source.transform || {};
@@ -108,7 +131,14 @@
     if (!asset) throw new TypeError(`Unknown premade asset: ${assetId}`);
     let cell = null;
     let crop = null;
-    if (asset.grid) {
+    let spriteCandidate = null;
+    const spriteInput = source.spriteCandidate || null;
+    const spriteBelongsToAsset = spriteInput && (!spriteInput.atlasId || String(spriteInput.atlasId) === assetId);
+    if (spriteBelongsToAsset) {
+      if (asset.grid) throw new TypeError('spriteCandidate layers must reference a non-grid atlas.');
+      spriteCandidate = normalizeSpriteCandidate(spriteInput, assetId);
+      normalizedCropRect(pack, spriteCandidate.normalizedBounds);
+    } else if (asset.grid) {
       const row = Number.isInteger(source.cell && source.cell.row) ? source.cell.row : 0;
       const column = Number.isInteger(source.cell && source.cell.column) ? source.cell.column : 0;
       gridCellRect(pack, asset, row, column);
@@ -117,18 +147,19 @@
       crop = {
         x: clamp(source.crop.x, 0, 1),
         y: clamp(source.crop.y, 0, 1),
-        width: clamp(source.crop.width, 0.01, 1),
-        height: clamp(source.crop.height, 0.01, 1),
+        width: clamp(source.crop.width, 0.000001, 1),
+        height: clamp(source.crop.height, 0.000001, 1),
         samplingGrid: source.crop.samplingGrid || null
       };
       normalizedCropRect(pack, crop);
     }
     return {
       id: String(source.id || `layer-${index + 1}-${fnv1a(`${assetId}|${index}`)}`),
-      name: String(source.name || assetId),
+      name: String(source.name || (spriteCandidate && spriteCandidate.id) || assetId),
       assetId,
       cell,
       crop,
+      spriteCandidate,
       visible: source.visible !== false,
       opacity: clamp(source.opacity == null ? 1 : source.opacity, 0, 1),
       blendMode: normalizeBlend(source.blendMode),
@@ -158,9 +189,9 @@
       notes: '',
       truthBoundary: {
         alpha: 'Composition preserves source alpha and transparent output unless the caller deliberately changes it.',
-        segmentation: 'Non-grid atlas crops are deterministic sampling windows, not semantic object segmentation.',
+        segmentation: 'Declared globe cells are semantic grid cells. v0.14 sprite candidates are observed alpha regions, not automatically semantic object labels. Coarse windows remain non-semantic sampling regions.',
         physical: 'Generated ingredients and their composition are visual state, not measured material physics.',
-        authority: 'Seeded generation proposes a composition; it does not auto-promote or rewrite canonical material state.'
+        authority: 'Seeded generation and sprite extraction propose reusable state; neither auto-promotes nor rewrites canonical material state.'
       }
     };
   }
@@ -175,7 +206,19 @@
       return { ok: false, reason: error && error.message ? error.message : String(error) };
     }
   }
+  function sourceTypeForLayer(asset, layer) {
+    if (layer.spriteCandidate) return 'sprite-candidate';
+    if (asset.grid) return 'globe-cell';
+    if (layer.crop) return 'atlas-window';
+    return 'atlas-full';
+  }
   function sourceRectForLayer(pack, asset, layer) {
+    if (layer.spriteCandidate) {
+      const rect = normalizedCropRect(pack, layer.spriteCandidate.normalizedBounds);
+      rect.spriteCandidate = true;
+      rect.spriteId = layer.spriteCandidate.id;
+      return rect;
+    }
     if (asset.grid) return gridCellRect(pack, asset, layer.cell.row, layer.cell.column);
     if (layer.crop) return normalizedCropRect(pack, layer.crop);
     const [width, height] = runtimeSize(pack);
@@ -192,6 +235,7 @@
         assetKind: asset.kind,
         category: asset.category,
         tags: clone(asset.tags || []),
+        sourceType: sourceTypeForLayer(asset, layer),
         resourcePath: resourcePath(pack, asset),
         sourceRect: sourceRectForLayer(pack, asset, layer)
       });
@@ -205,6 +249,7 @@
         assetId: layer.assetId,
         cell: layer.cell,
         crop: layer.crop,
+        spriteCandidate: layer.spriteCandidate,
         visible: layer.visible,
         opacity: layer.opacity,
         blendMode: layer.blendMode,
@@ -281,6 +326,7 @@
   return {
     VERSION, FORMAT, BLEND_MODES: BLEND_MODES.slice(), clone, clamp, stableStringify, fnv1a, xorshift,
     byId, runtimeSize, resourcePath, gridCellRect, normalizedCropRect, coarseWindow,
-    normalizeLayer, createRecipe, validateRecipe, compilePlan, seededRecipe, recipeFingerprint
+    normalizeBounds, normalizeSpriteCandidate, normalizeLayer, createRecipe, validateRecipe,
+    sourceTypeForLayer, sourceRectForLayer, compilePlan, seededRecipe, recipeFingerprint
   };
 });

@@ -52,8 +52,10 @@ const manualPlan = core.compilePlan(manual,pack);
 assert.strictEqual(manualPlan.layers.length,2);
 assert.strictEqual(manualPlan.layers[0].blendMode,'overlay');
 assert.strictEqual(manualPlan.layers[1].blendMode,'screen');
-assert.match(core.stableStringify(manual.truthBoundary), /does not auto-promote/);
-assert.match(core.stableStringify(manual.truthBoundary), /not semantic object segmentation/);
+const truth = core.stableStringify(manual.truthBoundary);
+assert.match(truth, /auto-promot/);
+assert.match(truth, /semantic/);
+assert.match(truth, /not automatically/);
 
 const noFx = core.seededRecipe('no-fx', pack, {overlayCount:8,includeFx:false,includeDecals:false});
 assert.ok(noFx.layers.slice(1).every((layer)=>core.byId(pack,layer.assetId).kind === 'overlay-atlas'));
