@@ -1,14 +1,49 @@
 # AXM Material / Surface Fabric
 
-A local-first material, texture, overlay, decal, surface-composition, material-state, influence, render, vocabulary, evaluation, and cross-machine exchange experiment for AXM.
+A local-first material, texture, overlay, decal, surface-composition, material-state, influence, render, vocabulary, evaluation, cross-machine exchange, and headless conformance experiment for AXM.
 
 Its role is deliberately narrower than “make every visual here”:
 
 > **Increase the quality, reuse, inspectability, and quantity of material / texture ingredients so other AXM visual systems become stronger.**
 
-Visuals may be created by Universal Creation, Game Asset Forge, FrameState, image generators, scans, authored material tools, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render explicit material channels locally through WebGL, grow a deterministic baseline material vocabulary, evaluate that state across controlled render conditions, and exchange material state with other machines through portable receipts.
+Visuals may be created by Universal Creation, Game Asset Forge, FrameState, image generators, scans, authored material tools, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render explicit material channels locally through WebGL, grow a deterministic baseline material vocabulary, evaluate that state across controlled render conditions, exchange material state with other machines through portable receipts, and verify that interchange headlessly before a browser is involved.
 
-Open `index.html` directly in a modern browser. No install, account, server, AI call, or network connection is required.
+Open `index.html` directly in a modern browser for the visual tools. The v0.10 conformance path runs directly under Node and requires no account, server, AI call, or network connection.
+
+## v0.10.0 — Material Exchange Conformance
+
+v0.10 adds the machine-facing verifier that the v0.9 exchange floor was missing:
+
+`producer → axm-material-offer/v0.9.0 → headless structure/byte conformance → optional v0.4/v0.5 receiver projection → existing browser/render/evaluation path → axm-material-feedback/v0.9.0 → headless round-trip check`
+
+The conformance harness can:
+
+- validate material offers without opening the browser UI;
+- strictly decode portable PNG/JPEG/WEBP data URLs;
+- compute exact receiver-side SHA-256 for payload bytes;
+- compare producer-declared SHA-256 when present;
+- check declared MIME against the data-URL MIME;
+- check bounded PNG/JPEG/WEBP container signatures;
+- preserve missing bytes, malformed payloads, hash mismatch, MIME mismatch and signature mismatch as explicit HOLD state;
+- keep explicitly `unassigned` channels unassigned rather than guessing semantics;
+- emit deterministic `axm-material-conformance-receipt/v0.10.0` identities independent of check time;
+- project one family into the same existing v0.4 Material Library bundle and v0.5 Influence Workspace shapes used by the receiver;
+- preserve HOLD entries inside the detached projection instead of dropping them;
+- validate v0.9 feedback packets and, when the original offer is supplied, prove offer ID/fingerprint/family round-trip integrity;
+- return CLI exit `0` for PASS, `2` for HOLD, and `1` for usage/runtime errors.
+
+Example:
+
+```bash
+node tools/material-conformance.js check-material-offer \
+  examples/conformance/valid-offer.json \
+  --family family \
+  --projection-out build/material-projection.json
+```
+
+Conformance proves contract/byte integrity only. It is not a full image decoder, aesthetic judge, PBR certification, physical-material validator, renderer-compatibility proof, install permission, or canonical merge authority.
+
+See [`docs/MATERIAL_EXCHANGE_CONFORMANCE_V0_10.md`](docs/MATERIAL_EXCHANGE_CONFORMANCE_V0_10.md) and [`examples/conformance/`](examples/conformance/).
 
 ## v0.9.0 — Cross-Machine Material Exchange
 
@@ -34,7 +69,7 @@ The Cross-Machine Material Exchange can:
 
 The protocol does **not** make Material / Surface Fabric canonical authority over a producer, and a technical score or feedback packet never grants automatic adoption/promotion authority.
 
-Producer-specific adapters for Game Asset Forge, FrameState, Universal Creation or other systems remain separate work in those repositories' own collaboration lanes. v0.9 proves the receiving/feedback contract and provides a documentation fixture; it does not claim those producers already emit this format until their own adapters are implemented and exercised.
+Producer-specific adapters for Game Asset Forge, FrameState, Universal Creation or other systems remain separate work in those repositories' own collaboration lanes. v0.9 proves the receiving/feedback contract; v0.10 now gives those producer lanes a headless conformance target before real circulation.
 
 See [`docs/CROSS_MACHINE_MATERIAL_EXCHANGE_V0_9.md`](docs/CROSS_MACHINE_MATERIAL_EXCHANGE_V0_9.md) and [`examples/material-offer-v0.9.example.json`](examples/material-offer-v0.9.example.json).
 
@@ -171,11 +206,11 @@ See [`docs/TRACE_DOWN_EXPERIMENT.md`](docs/TRACE_DOWN_EXPERIMENT.md).
 
 ## Existing material / surface capability
 
-The working page now provides local image intake and composition, portable state, snapshots/diffs, persistent material library/families, influence recipes, real WebGL material rendering, hundreds of deterministic seed maps/overlays, bounded batch evaluation/evolution, reviewed promotion receipts, and versioned cross-machine material offer/feedback interchange.
+The working page now provides local image intake and composition, portable state, snapshots/diffs, persistent material library/families, influence recipes, real WebGL material rendering, hundreds of deterministic seed maps/overlays, bounded batch evaluation/evolution, reviewed promotion receipts, and versioned cross-machine material offer/feedback interchange. The repository also provides a separate headless Node conformance route for machine/CI use.
 
 ## Capability first
 
-The project does **not** declare the seed vocabulary, v0.8 technical ranking, or v0.9 exchange channel vocabulary to be a universal material ontology or universal quality function. Real sources and working operations come first; schemas are kept small enough to evolve as stronger evidence appears.
+The project does **not** declare the seed vocabulary, v0.8 technical ranking, v0.9 exchange channel vocabulary, or v0.10 PASS state to be a universal material ontology or universal quality function. Real sources and working operations come first; schemas are kept small enough to evolve as stronger evidence appears.
 
 See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
@@ -183,10 +218,10 @@ See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
 Internal AXM work is judged against the roots:
 
-- **Truth** — distinguish producer declarations, exact byte evidence, receiver verification, observed state, routing hints, synthetic provenance, interpreted render channels, bounded technical evaluation, preserved-only state, inference, and unknowns.
-- **Agency / non-domination** — generation, exchange import, verification, installation, staging, evaluation, candidate selection, feedback export, rendering, and producer adoption remain explicit actions; technical rank never silently becomes promotion authority.
-- **Continuity** — stable IDs, offer fingerprints, producer identity, hashes, descriptors, mutation lineage, evaluation sessions, framebuffer evidence, install/feedback receipts, persistent library state, recipes, families, render receipts and donor packs preserve what happened.
-- **Wisdom before speed** — packets are not automatically trusted because they come from another AXM machine; byte mismatch and missing state remain visible, and technical scores or feedback never become silent aesthetic/physical truth.
+- **Truth** — distinguish producer declarations, exact byte evidence, receiver verification, conformance state, observed state, routing hints, synthetic provenance, interpreted render channels, bounded technical evaluation, preserved-only state, inference, and unknowns.
+- **Agency / non-domination** — generation, exchange import, conformance, installation, staging, evaluation, candidate selection, feedback export, rendering, and producer adoption remain explicit actions; technical rank and conformance PASS never silently become promotion authority.
+- **Continuity** — stable IDs, offer fingerprints, producer identity, SHA-256 receipts, descriptors, mutation lineage, evaluation sessions, framebuffer evidence, install/feedback/conformance receipts, persistent library state, recipes, families, render receipts and donor packs preserve what happened.
+- **Wisdom before speed** — packets are not trusted because they come from another AXM machine; byte mismatch and missing state remain HOLD, and technical scores, feedback, or conformance never become silent aesthetic/physical truth.
 
 ## Tests
 
@@ -196,10 +231,10 @@ Pure helpers can be checked with Node:
 npm test
 ```
 
-CI syntax-checks all browser JavaScript. Tests cover state/trace/delta/library/influence/renderer behavior, v0.7 vocabulary breadth/determinism/provenance, v0.8 renderer-health/evolution/session semantics, and v0.9 offer validation, duplicate/missing-reference rejection, portable/HOLD classification, stable receiver identity, library-bundle conversion, evaluation feedback references, and no-automatic-promotion truth boundaries.
+CI syntax-checks the browser and headless JavaScript. Tests cover state/trace/delta/library/influence/renderer behavior, v0.7 vocabulary breadth/determinism/provenance, v0.8 renderer-health/evolution/session semantics, v0.9 offer validation/stable receiver identity/feedback boundaries, and v0.10 SHA-256/MIME/signature verification, HOLD fixtures, deterministic projections, feedback round trips and CLI exit semantics.
 
 ## Truth boundary
 
-The page can directly observe its own runtime state, pixels, encoded PNG representation, controlled lineage, reusable payloads, influence recipes, WebGL framebuffer output, deterministic seed descriptors/maps, bounded renderer-health observations, deterministic variants, imported v0.9 offer bytes, and receiver-side payload hashes.
+The page can directly observe its own runtime state, pixels, encoded PNG representation, controlled lineage, reusable payloads, influence recipes, WebGL framebuffer output, deterministic seed descriptors/maps, bounded renderer-health observations, deterministic variants, imported v0.9 offer bytes, and receiver-side payload hashes. The headless v0.10 path can independently verify contract structure, available portable bytes and exact round-trip references.
 
-It does not claim automatic PBR correctness, physical-material recognition, measured BRDF data, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, HDRI certification, cross-engine render parity, cross-GPU bit-for-bit identity, geometric shadow correctness, displacement rendering, scan-grade quality, that the highest technical rank is visually best, that producer declarations are true merely because they were imported, or that any producer already implements v0.9 until its own adapter is separately built and exercised.
+It does not claim automatic PBR correctness, physical-material recognition, measured BRDF data, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, HDRI certification, cross-engine render parity, cross-GPU bit-for-bit identity, geometric shadow correctness, displacement rendering, scan-grade quality, that the highest technical rank is visually best, that a conformance PASS proves material quality, that producer declarations are true merely because they were imported, or that any producer already implements v0.9 until its own adapter is separately built and exercised.

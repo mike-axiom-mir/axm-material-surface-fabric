@@ -37,5 +37,7 @@ jobs:
           node --check material-evaluation.js
           node --check exchange-core.js
           node --check material-exchange.js
-      - name: State, trace, delta, library, influence, renderer, vocabulary, evaluation, and exchange tests
+          node --check conformance-core.js
+          node --check tools/material-conformance.js
+      - name: State, trace, delta, library, influence, renderer, vocabulary, evaluation, exchange, and conformance tests
         run: npm test
