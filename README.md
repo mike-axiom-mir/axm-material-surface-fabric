@@ -6,9 +6,35 @@ Its role is deliberately narrower than “make every visual here”:
 
 > **Increase the quality, reuse, inspectability, and quantity of material / texture ingredients so other AXM visual systems become stronger.**
 
-Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, and export portable donor packs.
+Visuals may be created by Universal Creation, game-asset tooling, FrameState, image generators, or later visual machines. This repository can intake those sources, combine/refine them, preserve evidence, study controlled changes, keep a reusable local library, compose material influence recipes, render several explicit material channels locally through WebGL, and export portable donor packs.
 
 Open `index.html` directly in a modern browser. No install, account, server, AI call, or network connection is required.
+
+## v0.6.0 — Real Material Renderer
+
+v0.6 adds the first renderer downstream of the v0.5 influence-state system:
+
+`v0.5 saved/imported recipe → explicit channel render plan → local channel texture composition → sphere/plane/cube WebGL material shader → framebuffer → render receipt / A-B delta / cross-light sweep`
+
+The renderer can:
+
+- load the explicitly saved v0.5 Influence Lab workspace or import its JSON without rewriting that source state;
+- render local sphere, plane, or cube geometry with positions, normals, tangents and UVs and no external 3D dependency;
+- directly sample base-color, tangent-space normal, roughness, metallic, ambient-occlusion, emissive and opacity channels;
+- map declared decal and microdetail layers into the base-color composition while recording that mapping explicitly;
+- preserve height, displacement, color-mask and unassigned state as preserved-only instead of pretending those channels are already rendered;
+- preserve missing entry references and payload-less layers as held state;
+- reuse recipe layer order, blend modes, opacity, masks, transforms and tiling when composing channel textures;
+- interpret the existing light rigs in a bounded metallic/roughness WebGL lighting approximation;
+- turn the grazing view from a 2D proxy into an actual oblique WebGL camera and use tile/close-up view states in the 3D path;
+- apply sampled AO, normal, metallic, roughness, emissive and opacity state plus existing exposure, saturation, clearcoat-like, Fresnel-like and roughness-override controls;
+- export `axm-material-render-receipt/v0.6.0` evidence containing plan identity, interpreted/preserved channels, held state, WebGL context, draw completion and framebuffer pixel hash;
+- capture WebGL A/B framebuffers and reuse the existing Material Delta engine for exact pixel/region difference evidence;
+- replay the exact same recipe through every declared light rig to produce a cross-light comparison gallery.
+
+The WebGL renderer is a real executable material-preview path, but it remains deliberately bounded. It does not claim engine parity, PBR certification, HDRI truth, geometric shadow maps, displacement rendering or physical-material correctness.
+
+See [`docs/REAL_MATERIAL_RENDERER_V0_6.md`](docs/REAL_MATERIAL_RENDERER_V0_6.md).
 
 ## v0.5.0 — Material Influence Lab
 
@@ -105,7 +131,8 @@ The working page provides:
 - a bounded action event log;
 - deterministic local demo visuals for exercising the state experiment without external assets;
 - persistent reusable material-library entries and families;
-- persistent material influence recipes with explicit stacking, routing, light/view and shader-like preview state.
+- persistent material influence recipes with explicit stacking, routing, light/view and shader-like preview state;
+- a local WebGL material renderer for explicit base-color/normal/roughness/metallic/AO/emissive/opacity interpretation and framebuffer evidence.
 
 ## Capability first
 
@@ -117,23 +144,23 @@ See [`docs/STATE_EXPERIMENT.md`](docs/STATE_EXPERIMENT.md).
 
 Internal AXM work is judged against the roots:
 
-- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, preview approximations, inference, and unknowns.
+- **Truth** — distinguish observed state, declared experiment intent, measured output, routing hints, preview approximations, interpreted render channels, preserved-only state, inference, and unknowns.
 - **Agency / non-domination** — local user control; no hidden upload, account, cloud, or remote dependency.
-- **Continuity** — exported state, experiments, lineage, persistent library entries, recipes, families, influence state and donor packs preserve what actually happened.
-- **Wisdom before speed** — learn reusable material relationships from controlled use before prematurely imposing a universal schema or pretending a bounded preview is a complete renderer.
+- **Continuity** — exported state, experiments, lineage, persistent library entries, recipes, families, influence state, render receipts and donor packs preserve what actually happened.
+- **Wisdom before speed** — learn reusable material relationships from controlled use before prematurely imposing a universal schema or pretending a bounded renderer proves physical correctness.
 
 ## Tests
 
-The browser page itself has no build dependency. Pure state/trace/delta/library/influence helpers can be checked with Node:
+The browser page itself has no build dependency. Pure state/trace/delta/library/influence/renderer helpers can be checked with Node:
 
 ```bash
 npm test
 ```
 
-CI also syntax-checks the browser JavaScript. Tests cover stable state primitives, snapshot diffs, import validation, byte hashing, pixel summaries, trace comparison, spatial pixel deltas, region summaries, difference buffers, transition truth boundaries, stable library IDs, family membership, legacy donor import, donor-pack round trips, material recipe normalization, bounded layer transforms, light/view/shader state, recipe duplication, fingerprints and state comparisons.
+CI also syntax-checks the browser JavaScript. Tests cover stable state primitives, snapshot diffs, import validation, byte hashing, pixel summaries, trace comparison, spatial pixel deltas, region summaries, difference buffers, transition truth boundaries, stable library IDs, family membership, legacy donor import, donor-pack round trips, material recipe normalization, bounded layer transforms, light/view/shader state, recipe duplication, fingerprints, state comparisons, renderer plan classification, preserved/held state, render receipts, deterministic light/view state, and sphere/plane/cube geometry contracts.
 
 ## Truth boundary
 
-The page can directly observe its own build metadata, canvas pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences between same-size captures, the exact reusable image payloads it stores locally, and the complete influence state used by its v0.5 preview path.
+The page can directly observe its own build metadata, canvas pixels, encoded PNG representation, controlled lineage declarations, pixel-local differences between same-size captures, the exact reusable image payloads it stores locally, the complete influence state used by its v0.5 preview path, and the local WebGL framebuffer produced from explicit material-channel routing in v0.6.
 
-It does not claim automatic PBR correctness, physical-material recognition, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, full GPU shader execution, BRDF/HDRI correctness, cross-engine render parity, or causal states that were never recorded/exposed. A donor pack proves portable material data and declared routing metadata exist; downstream usefulness is established only when a separate consumer validates and adapts it. The v0.5 influence preview proves how this page combines and changes its own observable output, not universal physical-material behavior.
+It does not claim automatic PBR correctness, physical-material recognition, complete semantic understanding, aesthetic judgment, hidden generator-state recovery, BRDF/HDRI certification, cross-engine render parity, cross-GPU bit-for-bit framebuffer identity, geometric shadow correctness, displacement rendering, or causal states that were never recorded/exposed. A donor pack proves portable material data and declared routing metadata exist; downstream usefulness is established only when a separate consumer validates and adapts it. The v0.5 influence preview and v0.6 WebGL renderer prove how these local tool paths combine and respond to explicit state, not universal physical-material behavior.
