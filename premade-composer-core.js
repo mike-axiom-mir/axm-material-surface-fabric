@@ -109,13 +109,14 @@
     if (width <= 0 || height <= 0) throw new TypeError('Sprite candidate normalized bounds must be positive.');
     return { x, y, width, height };
   }
-  function normalizeSpriteCandidate(raw) {
+  function normalizeSpriteCandidate(raw, assetId) {
     if (!raw) return null;
     const id = String(raw.id || raw.spriteId || '').trim();
     if (!id) throw new TypeError('spriteCandidate.id is required.');
     const bounds = normalizeBounds(raw.normalizedBounds || raw.bounds);
     return {
       id,
+      atlasId: String(raw.atlasId || assetId || '').trim() || null,
       normalizedBounds: bounds,
       sourceIndexId: raw.sourceIndexId ? String(raw.sourceIndexId) : null,
       sourceBasis: raw.sourceBasis ? String(raw.sourceBasis) : null,
@@ -131,9 +132,11 @@
     let cell = null;
     let crop = null;
     let spriteCandidate = null;
-    if (source.spriteCandidate) {
+    const spriteInput = source.spriteCandidate || null;
+    const spriteBelongsToAsset = spriteInput && (!spriteInput.atlasId || String(spriteInput.atlasId) === assetId);
+    if (spriteBelongsToAsset) {
       if (asset.grid) throw new TypeError('spriteCandidate layers must reference a non-grid atlas.');
-      spriteCandidate = normalizeSpriteCandidate(source.spriteCandidate);
+      spriteCandidate = normalizeSpriteCandidate(spriteInput, assetId);
       normalizedCropRect(pack, spriteCandidate.normalizedBounds);
     } else if (asset.grid) {
       const row = Number.isInteger(source.cell && source.cell.row) ? source.cell.row : 0;
