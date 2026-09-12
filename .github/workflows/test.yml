@@ -39,5 +39,8 @@ jobs:
           node --check material-exchange.js
           node --check conformance-core.js
           node --check tools/material-conformance.js
-      - name: State, trace, delta, library, influence, renderer, vocabulary, evaluation, exchange, and conformance tests
+          node --check tools/premade-assets.js
+      - name: Python syntax
+        run: python -m py_compile tools/install-premade-pack.py
+      - name: State, trace, delta, library, influence, renderer, vocabulary, evaluation, exchange, conformance, and premade-pack tests
         run: npm test
