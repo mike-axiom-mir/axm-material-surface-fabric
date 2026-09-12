@@ -1,15 +1,16 @@
 {
   "name": "axm-material-surface-fabric",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": true,
-  "description": "Local-first material/texture composition, reusable library, WebGL rendering, deterministic vocabulary, exchange/conformance, premade alpha/globe packs, deterministic composition/evolution, and alpha sprite decomposition for AXM.",
+  "description": "Local-first material/texture composition, reusable library, WebGL rendering, deterministic vocabulary, exchange/conformance, premade alpha/globe packs, deterministic composition/evolution, alpha sprite decomposition, and explicit keeper-derived recipe pattern memory for AXM.",
   "scripts": {
-    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js && node tests/exchange-core.test.js && node tests/conformance-core.test.js && node tests/premade-pack-metadata.test.js && node tests/premade-composer-core.test.js && node tests/premade-evolution-core.test.js && node tests/alpha-sprite-core.test.js && node tests/png-rgba.test.js && node tests/premade-sprite-integration.test.js",
+    "test": "node tests/state-core.test.js && node tests/trace-core.test.js && node tests/delta-core.test.js && node tests/library-core.test.js && node tests/influence-core.test.js && node tests/renderer-core.test.js && node tests/material-vocabulary-core.test.js && node tests/material-evaluation-core.test.js && node tests/exchange-core.test.js && node tests/conformance-core.test.js && node tests/premade-pack-metadata.test.js && node tests/premade-composer-core.test.js && node tests/premade-evolution-core.test.js && node tests/alpha-sprite-core.test.js && node tests/png-rgba.test.js && node tests/premade-sprite-integration.test.js && node tests/premade-pattern-core.test.js",
     "material:conform": "node tools/material-conformance.js",
     "premade:list": "node tools/premade-assets.js list",
     "premade:pack": "node tools/premade-assets.js pack",
     "premade:compose": "node tools/premade-compose.js",
     "premade:evolve": "node tools/premade-evolve.js",
-    "premade:sprites": "node tools/premade-sprites.js"
+    "premade:sprites": "node tools/premade-sprites.js",
+    "premade:patterns": "node tools/premade-patterns.js"
   }
 }
