@@ -1,0 +1,159 @@
+.trace-panel {
+  grid-column: 1 / -1;
+}
+
+.trace-heading {
+  align-items: center;
+}
+
+.trace-truth {
+  margin: 14px 15px 0;
+}
+
+.trace-path {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 15px;
+  padding: 12px 14px;
+  border: 1px solid rgba(85, 217, 255, 0.18);
+  border-radius: 11px;
+  background: rgba(85, 217, 255, 0.035);
+}
+
+.trace-path span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,0.035);
+  color: #dbeaf0;
+  font: 800 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .08em;
+}
+
+.trace-path b {
+  color: var(--orange);
+  font-weight: 900;
+}
+
+.trace-controls {
+  margin: 0 15px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.trace-label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.trace-label input,
+.trace-compare select {
+  width: 100%;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: rgba(0,0,0,.22);
+  color: var(--text);
+  padding: 8px 9px;
+}
+
+.trace-presets,
+.trace-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.trace-compare {
+  margin: 0 15px 14px;
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) minmax(130px, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.trace-compare label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.trace-captures {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 8px;
+  margin: 0 15px 14px;
+}
+
+.trace-card {
+  appearance: none;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  background: rgba(255,255,255,.025);
+  cursor: pointer;
+}
+
+.trace-card:hover {
+  border-color: rgba(85,217,255,.35);
+}
+
+.trace-card img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  border-radius: 7px;
+  background:
+    linear-gradient(45deg, #20262b 25%, transparent 25%),
+    linear-gradient(-45deg, #20262b 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #20262b 75%),
+    linear-gradient(-45deg, transparent 75%, #20262b 75%);
+  background-size: 12px 12px;
+  background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+}
+
+.trace-card span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.trace-card strong,
+.trace-card small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trace-card small {
+  color: var(--muted);
+  font: 10px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.trace-output {
+  margin: 0 15px 15px;
+  min-height: 260px;
+  max-height: 620px;
+}
+
+@media (max-width: 760px) {
+  .trace-compare {
+    grid-template-columns: 1fr;
+  }
+  .trace-action-row .button {
+    flex: 1 1 150px;
+  }
+}
