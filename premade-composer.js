@@ -17,9 +17,9 @@
   panel.innerHTML = `
     <div class="panel-heading">
       <div><div class="panel-kicker">13</div><h2>Premade Deterministic Composer</h2></div>
-      <span class="count-pill">v0.12</span>
+      <span class="count-pill">v0.12 + sprite intake</span>
     </div>
-    <div class="truth-note">Combine v0.11 globes, alpha overlays, decals and holographic FX into transparent reproducible recipes. Globe cells are declared semantic cells; other atlas windows are deterministic crops, not claimed object segmentation.</div>
+    <div class="truth-note">Combine v0.11 globes, alpha overlays, decals and holographic FX into transparent reproducible recipes. Globe cells are declared semantic cells; coarse atlas windows are deterministic crops; v0.14 sprite candidates are exact observed alpha regions but are not automatically semantic object labels.</div>
 
     <div class="premade-toolbar">
       <label>Seed<input id="premadeSeed" value="axm-001" /></label>
@@ -115,7 +115,8 @@
     recipe.layers.forEach((layer, index) => {
       const row = document.createElement('div');
       row.className = `premade-layer${layer.id === selectedLayerId ? ' active' : ''}`;
-      row.innerHTML = `<div><strong>${layer.name}</strong><br><small>${layer.assetId} · ${layer.blendMode} · ${Math.round(layer.opacity*100)}%</small></div><small>${index + 1}</small>`;
+      const source = layer.spriteCandidate ? `sprite ${layer.spriteCandidate.id.split('/').pop()}` : layer.cell ? `cell ${layer.cell.row}:${layer.cell.column}` : layer.crop ? 'atlas window' : 'atlas';
+      row.innerHTML = `<div><strong>${layer.name}</strong><br><small>${layer.assetId} · ${source} · ${layer.blendMode} · ${Math.round(layer.opacity*100)}%</small></div><small>${index + 1}</small>`;
       row.addEventListener('click', () => { selectedLayerId = layer.id; renderLayerList(); renderInspector(); });
       el.layers.appendChild(row);
     });
@@ -129,7 +130,7 @@
   function renderInspector() {
     const layer = selectedLayer();
     if (!layer) { el.selected.textContent = 'none'; el.inspector.innerHTML = '<div class="wide premade-status">Select a layer.</div>'; return; }
-    el.selected.textContent = layer.assetId;
+    el.selected.textContent = layer.spriteCandidate ? layer.spriteCandidate.id : layer.assetId;
     el.inspector.innerHTML = `
       <label>Visible<select data-field="visible"><option value="true" ${layer.visible?'selected':''}>yes</option><option value="false" ${!layer.visible?'selected':''}>no</option></select></label>
       <label>Blend<select data-field="blendMode">${core.BLEND_MODES.map((mode)=>`<option ${mode===layer.blendMode?'selected':''}>${mode}</option>`).join('')}</select></label>
@@ -197,7 +198,7 @@
         ctx.scale(t.mirrorX ? -1 : 1, t.mirrorY ? -1 : 1);
         ctx.drawImage(image, s.x, s.y, s.width, s.height, -dw/2, -dh/2, dw, dh);
         ctx.restore();
-        rendered.push(layer.id);
+        rendered.push({ layerId:layer.id, sourceType:layer.sourceType, spriteId:layer.spriteCandidate && layer.spriteCandidate.id || null });
       } catch (error) { held.push({ layerId: layer.id, assetId: layer.assetId, reason: error.message }); }
     }
     lastReceipt = {
@@ -205,12 +206,48 @@
       recipeId:plan.recipeId, recipeFingerprint:plan.recipeFingerprint,
       packVersion:pack.version, archiveSha256:pack.binaryPack.sha256,
       transparentOutput:true, renderedLayers:rendered, heldLayers:held,
-      truthBoundary:'Canvas composition evidence only; missing runtime files remain HOLD and non-grid atlas crops are not semantic segmentation.'
+      truthBoundary:'Canvas composition evidence only; missing runtime files remain HOLD. v0.14 sprite candidates are alpha-derived regions, not automatic semantic labels.'
     };
     el.fingerprint.textContent = plan.recipeFingerprint;
     el.renderStatus.innerHTML = held.length ? `<span class="premade-held">rendered ${rendered.length}, HOLD ${held.length}</span>` : `rendered ${rendered.length} layers`;
     el.receipt.textContent = JSON.stringify(lastReceipt,null,2);
     return lastReceipt;
+  }
+
+  function addSpriteCandidate(detail) {
+    const source = detail || {};
+    const current = core.byId(pack, source.atlasId);
+    if (!current || current.grid) throw new Error(`Unknown/non-extractable sprite atlas: ${source.atlasId}`);
+    const bounds = core.normalizeBounds(source.normalizedBounds || {});
+    const aspect = bounds.width / bounds.height;
+    let width = .64, height = .64;
+    if (aspect >= 1) height = Math.max(.10, width / aspect);
+    else width = Math.max(.10, height * aspect);
+    const raw = {
+      name: source.spriteId || 'alpha sprite candidate', assetId: current.id,
+      spriteCandidate: {
+        id: source.spriteId,
+        normalizedBounds: bounds,
+        sourceIndexId: source.sourceIndexId || null,
+        sourceBasis: source.sourceBasis || null,
+        canonicalSourceIndex: Boolean(source.canonicalSourceIndex)
+      },
+      opacity: 1,
+      blendMode: current.kind === 'fx-atlas' ? 'screen' : 'normal',
+      transform: { x:.5, y:.5, width, height, rotation:0 },
+      provenance: {
+        rule:'v0.14-alpha-sprite-candidate',
+        sourceIndexId:source.sourceIndexId || null,
+        sourceBasis:source.sourceBasis || null,
+        canonicalSourceIndex:Boolean(source.canonicalSourceIndex),
+        semanticObjectClaim:false
+      }
+    };
+    const layer = core.normalizeLayer(raw, recipe.layers.length, pack);
+    recipe.layers.push(layer); selectedLayerId = layer.id;
+    renderLayerList(); renderPreview();
+    el.packStatus.textContent = `Added exact alpha sprite: ${layer.spriteCandidate.id}`;
+    return layer;
   }
 
   el.asset.addEventListener('change', refreshAssetControls);
@@ -239,6 +276,16 @@
     } catch (error) { el.renderStatus.textContent = `import failed: ${error.message}`; }
     el.importRecipe.value = '';
   });
+  window.addEventListener('axm-premade-add-sprite', (event) => {
+    try { addSpriteCandidate(event.detail); }
+    catch (error) { el.packStatus.textContent = `sprite intake failed: ${error.message}`; }
+  });
+  window.AXMPremadeComposerBridge = {
+    addSpriteCandidate,
+    getRecipe: () => core.clone(recipe),
+    getReceipt: () => core.clone(lastReceipt),
+    render: renderPreview
+  };
 
   refreshAssetControls();
   renderLayerList();
