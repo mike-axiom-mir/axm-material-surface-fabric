@@ -10,6 +10,29 @@ Visuals may be created by Universal Creation, Game Asset Forge, FrameState, imag
 
 Open `index.html` directly in a modern browser for the visual tools. The v0.10 conformance path runs directly under Node and requires no account, server, AI call, or network connection.
 
+## v0.19.0 — Surface response organs
+
+v0.19 adds a bounded layer above texture channels: **surface response organs**.
+Texture maps still carry spatial channel values; the response layer carries reusable behavior such as subsurface transport, grazing-angle sheen, directional anisotropy, clear coat, deterministic micro-breakup, transmission/absorption, iridescence, and placed wear layers.
+
+The imported user-supplied update lives under `surface-response/` with an interactive zero-dependency material lab, the 13-family response pack, eight organ records, a shape schema, provenance, and an explicit verification note. The supplied reference host has eight measured organ checks; those receipts apply to that host only and do **not** silently certify this repository's existing WebGL renderer or any downstream renderer.
+
+Important boundaries:
+
+- response behavior is additive to texture/channel state, not a replacement for it;
+- unknown/unbound response organs must remain visible HOLD state in downstream adapters rather than silently collapsing to plastic;
+- material behavior can be judged in greyscale, backlight, and rotation tests without confusing color differences for material differences;
+- generated/baked textures remain secondary realizations where they cannot preserve view/light-dependent behavior;
+- no response family is automatically promoted, installed, or treated as aesthetic/physical truth.
+
+Run the data/host conformance smoke test with:
+
+```bash
+npm run surface-response:test
+```
+
+Open `surface-response/material-lab.html` directly for the interactive reference host.
+
 ## v0.10.0 — Material Exchange Conformance
 
 v0.10 adds the machine-facing verifier that the v0.9 exchange floor was missing:
